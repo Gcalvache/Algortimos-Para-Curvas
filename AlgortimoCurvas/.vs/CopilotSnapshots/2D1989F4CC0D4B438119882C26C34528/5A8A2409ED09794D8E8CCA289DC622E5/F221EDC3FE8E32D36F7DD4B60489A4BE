@@ -1,0 +1,130 @@
+﻿namespace AlgortimoCurvas
+{
+    partial class frmCurvaBezier
+    {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+        private System.Windows.Forms.PictureBox picCanvas;
+        private System.Windows.Forms.Button btnClear;
+        private System.Windows.Forms.Button btnAddPoint;
+        private System.Windows.Forms.ComboBox cmbExamples;
+        private System.Windows.Forms.Button btnLoadExample;
+        private System.Windows.Forms.Button btnInfo;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.picCanvas = new System.Windows.Forms.PictureBox();
+            this.btnClear = new System.Windows.Forms.Button();
+            this.btnAddPoint = new System.Windows.Forms.Button();
+            this.cmbExamples = new System.Windows.Forms.ComboBox();
+            this.btnLoadExample = new System.Windows.Forms.Button();
+            this.btnInfo = new System.Windows.Forms.Button();
+            ((System.ComponentModel.ISupportInitialize)(this.picCanvas)).BeginInit();
+            this.SuspendLayout();
+            // 
+            // picCanvas
+            // 
+            this.picCanvas.BackColor = System.Drawing.Color.White;
+            this.picCanvas.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.picCanvas.Location = new System.Drawing.Point(12, 12);
+            this.picCanvas.Name = "picCanvas";
+            this.picCanvas.Size = new System.Drawing.Size(760, 380);
+            this.picCanvas.TabIndex = 0;
+            this.picCanvas.TabStop = false;
+            this.picCanvas.Paint += new System.Windows.Forms.PaintEventHandler(this.picCanvas_Paint);
+            this.picCanvas.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picCanvas_MouseDown);
+            this.picCanvas.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picCanvas_MouseMove);
+            this.picCanvas.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picCanvas_MouseUp);
+            // 
+            // btnClear
+            // 
+            this.btnClear.Location = new System.Drawing.Point(800, 310);
+            this.btnClear.Name = "btnClear";
+            this.btnClear.Size = new System.Drawing.Size(120, 30);
+            this.btnClear.TabIndex = 3;
+            this.btnClear.Text = "Limpiar";
+            this.btnClear.UseVisualStyleBackColor = true;
+            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
+            // 
+            // btnAddPoint
+            // 
+            this.btnAddPoint.Location = new System.Drawing.Point(800, 260);
+            this.btnAddPoint.Name = "btnAddPoint";
+            this.btnAddPoint.Size = new System.Drawing.Size(120, 30);
+            this.btnAddPoint.TabIndex = 4;
+            this.btnAddPoint.Text = "Nuevo punto";
+            this.btnAddPoint.UseVisualStyleBackColor = true;
+            this.btnAddPoint.Click += new System.EventHandler(this.btnAddPoint_Click);
+            // 
+            // cmbExamples
+            // 
+            this.cmbExamples.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbExamples.FormattingEnabled = true;
+            this.cmbExamples.Location = new System.Drawing.Point(800, 40);
+            this.cmbExamples.Name = "cmbExamples";
+            this.cmbExamples.Size = new System.Drawing.Size(120, 24);
+            this.cmbExamples.TabIndex = 5;
+            // 
+            // btnLoadExample
+            // 
+            this.btnLoadExample.Location = new System.Drawing.Point(800, 70);
+            this.btnLoadExample.Name = "btnLoadExample";
+            this.btnLoadExample.Size = new System.Drawing.Size(120, 30);
+            this.btnLoadExample.TabIndex = 6;
+            this.btnLoadExample.Text = "Cargar ejemplo";
+            this.btnLoadExample.UseVisualStyleBackColor = true;
+            this.btnLoadExample.Click += new System.EventHandler(this.btnLoadExample_Click);
+            // 
+            // btnInfo
+            // 
+            this.btnInfo.Location = new System.Drawing.Point(800, 120);
+            this.btnInfo.Name = "btnInfo";
+            this.btnInfo.Size = new System.Drawing.Size(120, 30);
+            this.btnInfo.TabIndex = 7;
+            this.btnInfo.Text = "Info algoritmo";
+            this.btnInfo.UseVisualStyleBackColor = true;
+            this.btnInfo.Click += new System.EventHandler(this.btnInfo_Click);
+            // 
+            // frmCurvaBezier
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(940, 410);
+            this.Controls.Add(this.btnInfo);
+            this.Controls.Add(this.btnLoadExample);
+            this.Controls.Add(this.cmbExamples);
+            this.Controls.Add(this.btnAddPoint);
+            this.Controls.Add(this.btnClear);
+            this.Controls.Add(this.picCanvas);
+            this.Name = "frmCurvaBezier";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "CURVA BEZIER";
+            ((System.ComponentModel.ISupportInitialize)(this.picCanvas)).EndInit();
+            this.ResumeLayout(false);
+
+        }
+
+        #endregion
+    }
+}

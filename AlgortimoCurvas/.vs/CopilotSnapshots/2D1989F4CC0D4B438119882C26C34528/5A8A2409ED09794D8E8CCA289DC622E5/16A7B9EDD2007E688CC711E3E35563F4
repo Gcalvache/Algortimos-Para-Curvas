@@ -1,0 +1,297 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Windows.Forms;
+
+namespace AlgortimoCurvas
+{
+    public partial class frmCurvaB_Spline : Form
+    {
+        private List<PointF> controlPoints = new List<PointF>();
+        private List<PointF> curvePoints = new List<PointF>();
+
+        private int selectedPointIndex = -1;
+        private bool isDragging = false;
+
+        // Default number of samples for curve rendering
+        private int defaultSamples = 200;
+
+        // New: mode to add points when enabled
+        private bool addPointMode = false;
+
+        // Default degree to use for B-Spline when not specified
+        private int defaultDegree = 3;
+
+        public frmCurvaB_Spline()
+        {
+            InitializeComponent();
+            btnAddOnCurve.Text = "Nuevo punto (en curva)";
+
+            cmbExamples.Items.Add("Ejemplo 1: S-shape");
+            cmbExamples.Items.Add("Ejemplo 2: Zig-zag");
+            cmbExamples.Items.Add("Ejemplo 3: Arco");
+            cmbExamples.SelectedIndex = 0;
+
+            txtInfo.Text = "B-Spline (De Boor)\r\n\r\nDescripción técnica:\r\nImplementación de nudos clamped uniforme y evaluación mediante el algoritmo de De Boor.\r\nSe generan nudos con repeticiones en los extremos y nudos internos uniformes.\r\n\r\nCasos de uso en la aplicación:\r\n- Presets (S-shape, Zig-zag, Arco)\r\n- Arrastrar puntos de control para ver la actualización en tiempo real.\r\n- Insertar puntos en la curva con el botón 'Nuevo punto (en curva)'.";
+        }
+
+        private int EffectiveDegree()
+        {
+            if (controlPoints.Count <= 1) return 1;
+            int degree = defaultDegree;
+            if (degree >= controlPoints.Count) degree = controlPoints.Count - 1;
+            if (degree < 1) degree = 1;
+            return degree;
+        }
+
+        private void RecalcularCurva()
+        {
+            if (controlPoints.Count >= 2)
+            {
+                int degree = EffectiveDegree();
+                curvePoints = CCurva.EvaluarCurva(controlPoints, degree, defaultSamples);
+            }
+            else
+            {
+                curvePoints.Clear();
+            }
+            picCanvas.Invalidate();
+        }
+
+        private void picCanvas_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                if (addPointMode)
+                {
+                    // If curve exists and click is near it, project onto curve samples
+                    int curveIdx = GetCurvePointAt(e.Location);
+                    PointF insertPos;
+                    if (curveIdx >= 0 && curvePoints != null && curvePoints.Count > 0)
+                    {
+                        insertPos = curvePoints[curveIdx];
+                    }
+                    else
+                    {
+                        insertPos = new PointF(e.X, e.Y);
+                    }
+
+                    int insertIndex = FindBestInsertIndex(insertPos);
+                    if (insertIndex < 0) insertIndex = controlPoints.Count;
+                    controlPoints.Insert(insertIndex, insertPos);
+                    selectedPointIndex = insertIndex;
+                    isDragging = true;
+
+                    RecalcularCurva();
+                    return;
+                }
+
+                // Normal mode: only select existing control points for dragging
+                int idx = GetPointAt(e.Location);
+                if (idx >= 0)
+                {
+                    selectedPointIndex = idx;
+                    isDragging = true;
+                    RecalcularCurva();
+                }
+                else
+                {
+                    // do nothing on empty space when not in add mode
+                }
+            }
+            else if (e.Button == MouseButtons.Right)
+            {
+                int idx = GetPointAt(e.Location);
+                if (idx >= 0)
+                {
+                    controlPoints.RemoveAt(idx);
+                    selectedPointIndex = -1;
+                    RecalcularCurva();
+                }
+            }
+        }
+
+        private void picCanvas_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (isDragging && selectedPointIndex >= 0 && selectedPointIndex < controlPoints.Count)
+            {
+                controlPoints[selectedPointIndex] = e.Location;
+                RecalcularCurva();
+            }
+        }
+
+        private void picCanvas_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (isDragging)
+            {
+                isDragging = false;
+                selectedPointIndex = -1;
+                RecalcularCurva();
+            }
+        }
+
+        private int GetPointAt(Point location)
+        {
+            const int hitRadius = 8;
+            int idx = -1;
+            double bestDist = double.MaxValue;
+            for (int i = 0; i < controlPoints.Count; i++)
+            {
+                double dx = controlPoints[i].X - location.X;
+                double dy = controlPoints[i].Y - location.Y;
+                double d = dx * dx + dy * dy;
+                if (d <= hitRadius * hitRadius && d < bestDist)
+                {
+                    bestDist = d;
+                    idx = i;
+                }
+            }
+            return idx;
+        }
+
+        private int GetCurvePointAt(Point location)
+        {
+            if (curvePoints == null || curvePoints.Count == 0) return -1;
+            const int hitRadius = 6;
+            int idx = -1;
+            double bestDist = double.MaxValue;
+            for (int i = 0; i < curvePoints.Count; i++)
+            {
+                double dx = curvePoints[i].X - location.X;
+                double dy = curvePoints[i].Y - location.Y;
+                double d = dx * dx + dy * dy;
+                if (d <= hitRadius * hitRadius && d < bestDist)
+                {
+                    bestDist = d;
+                    idx = i;
+                }
+            }
+            return idx;
+        }
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            controlPoints.Clear();
+            curvePoints.Clear();
+            picCanvas.Invalidate();
+        }
+
+        private void btnAddOnCurve_Click(object sender, EventArgs e)
+        {
+            // Toggle add point mode
+            addPointMode = !addPointMode;
+            btnAddOnCurve.Text = addPointMode ? "Añadir punto: ON" : "Nuevo punto (en curva)";
+            picCanvas.Cursor = addPointMode ? Cursors.Cross : Cursors.Default;
+        }
+
+        private int FindBestInsertIndex(PointF point)
+        {
+            // Find the control polygon segment whose projection is nearest to the given point
+            if (controlPoints.Count < 2) return controlPoints.Count;
+            double bestDist = double.MaxValue;
+            int bestIndex = -1;
+            for (int i = 0; i < controlPoints.Count - 1; i++)
+            {
+                var a = controlPoints[i];
+                var b = controlPoints[i + 1];
+                var proj = ProjectPointOnSegment(point, a, b);
+                double dx = proj.X - point.X;
+                double dy = proj.Y - point.Y;
+                double d = dx * dx + dy * dy;
+                if (d < bestDist)
+                {
+                    bestDist = d;
+                    bestIndex = i + 1;
+                }
+            }
+            return bestIndex;
+        }
+
+        private PointF ProjectPointOnSegment(PointF p, PointF a, PointF b)
+        {
+            float vx = b.X - a.X;
+            float vy = b.Y - a.Y;
+            float wx = p.X - a.X;
+            float wy = p.Y - a.Y;
+            float denom = vx * vx + vy * vy;
+            if (denom == 0) return a;
+            float t = (vx * wx + vy * wy) / denom;
+            t = Math.Max(0f, Math.Min(1f, t));
+            return new PointF(a.X + t * vx, a.Y + t * vy);
+        }
+
+        private void picCanvas_Paint(object sender, PaintEventArgs e)
+        {
+            var g = e.Graphics;
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+            // Dibujar puntos de control
+            for (int i = 0; i < controlPoints.Count; i++)
+            {
+                var p = controlPoints[i];
+                var rect = new RectangleF(p.X - 5, p.Y - 5, 10, 10);
+                g.FillEllipse(Brushes.Blue, rect);
+                g.DrawEllipse(Pens.Black, rect);
+            }
+
+            // Dibujar líneas entre puntos de control
+            if (controlPoints.Count >= 2)
+            {
+                g.DrawLines(Pens.Gray, controlPoints.ToArray());
+            }
+
+            // Dibujar curva si existe
+            if (curvePoints != null && curvePoints.Count > 1)
+            {
+                g.DrawLines(Pens.Red, curvePoints.ToArray());
+            }
+        }
+
+        private void btnLoadExample_Click(object sender, EventArgs e)
+        {
+            controlPoints.Clear();
+            switch (cmbExamples.SelectedIndex)
+            {
+                case 0: // S-shape
+                    controlPoints.Add(new PointF(100, 300));
+                    controlPoints.Add(new PointF(200, 100));
+                    controlPoints.Add(new PointF(300, 300));
+                    controlPoints.Add(new PointF(400, 100));
+                    controlPoints.Add(new PointF(500, 300));
+                    break;
+                case 1: // Zig-zag
+                    controlPoints.Add(new PointF(100, 200));
+                    controlPoints.Add(new PointF(200, 100));
+                    controlPoints.Add(new PointF(300, 200));
+                    controlPoints.Add(new PointF(400, 100));
+                    controlPoints.Add(new PointF(500, 200));
+                    controlPoints.Add(new PointF(600, 100));
+                    break;
+                case 2: // Arco
+                    controlPoints.Add(new PointF(120, 320));
+                    controlPoints.Add(new PointF(220, 100));
+                    controlPoints.Add(new PointF(420, 100));
+                    controlPoints.Add(new PointF(520, 320));
+                    break;
+            }
+            RecalcularCurva();
+
+            // Update info text
+            txtInfo.Text = cmbExamples.SelectedIndex switch
+            {
+                0 => "Ejemplo 1: Curva en S\r\n\r\n" +
+                     "Descripción: Una curva en forma de S que muestra cómo los puntos de control afectan la forma de la curva.",
+                1 => "Ejemplo 2: Zig-zag\r\n\r\n" +
+                     "Descripción: Una serie de picos y valles que demuestran la respuesta de la curva a los cambios en los puntos de control.",
+                2 => "Ejemplo 3: Arco\r\n\r\n" +
+                     "Descripción: Un arco suave que ilustra la interpolación entre los puntos de control en forma de curva circular.",
+                _ => ""
+            };
+        }
+
+        private void btnInfo_Click(object sender, EventArgs e)
+        {
+            // no-op: info shown in txtInfo
+        }
+    }
+}

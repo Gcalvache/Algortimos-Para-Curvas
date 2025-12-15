@@ -1,0 +1,406 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Windows.Forms;
+
+namespace AlgortimoCurvas
+{
+    public partial class frmCurvaB_Spline : Form
+    {
+        private List<PointF> puntosControl = new List<PointF>();
+        private List<PointF> puntosCurva = new List<PointF>();
+
+        private int indicePuntoSeleccionado = -1;
+        private bool arrastrando = false;
+
+        private int muestrasPorDefecto = 200;
+
+        private bool modoAgregarPunto = false;
+
+        private int gradoPorDefecto = 3;
+
+        private float zoom = 1.0f;
+        private PointF pan = new PointF(0f, 0f);
+        private bool paneando = false;
+        private Point inicioPan;
+        private PointF valorInicioPan;
+
+        public frmCurvaB_Spline()
+        {
+            InitializeComponent();
+            btnNuevoPunto.Text = "Nuevo punto (en curva)";
+
+            cmbEjemplos.Items.Add("Ejemplo 1: S-shape");
+            cmbEjemplos.Items.Add("Ejemplo 2: Zig-zag");
+            cmbEjemplos.Items.Add("Ejemplo 3: Arco");
+            cmbEjemplos.SelectedIndex = 0;
+
+            txtInfo.Text = "B-Spline (De Boor)\r\n\r\nDescripción técnica:\r\nImplementación de nudos clamped uniforme y evaluación mediante el algoritmo de De Boor.\r\nSe generan nudos con repeticiones en los extremos y nudos internos uniformes.\r\n\r\nCasos de uso en la aplicación:\r\n- Presets (S-shape, Zig-zag, Arco)\r\n- Arrastrar puntos de control para ver la actualización en tiempo real.\r\n- Insertar puntos en la curva con el botón 'Nuevo punto (en curva)'.";
+
+            this.MouseWheel += FrmCurvaB_Spline_MouseWheel;
+            lienzo.MouseEnter += (s, e) => lienzo.Focus();
+        }
+
+        protected override void OnMouseWheel(MouseEventArgs e)
+        {
+            base.OnMouseWheel(e);
+            var client = this.PointToClient(Cursor.Position);
+            if (lienzo.Bounds.Contains(client))
+            {
+                HandleMouseWheel(new MouseEventArgs(e.Button, e.Clicks, client.X - lienzo.Left, client.Y - lienzo.Top, e.Delta));
+            }
+        }
+
+        private void HandleMouseWheel(MouseEventArgs e)
+        {
+            float delta = e.Delta > 0 ? 1.1f : 0.9f;
+            PointF mouse = new PointF(e.X, e.Y);
+            PointF mundoAntes = ScreenToWorld(mouse);
+            zoom *= delta;
+            if (zoom < 0.1f) zoom = 0.1f;
+            if (zoom > 50f) zoom = 50f;
+            pan = new PointF(mouse.X - mundoAntes.X * zoom, mouse.Y - mundoAntes.Y * zoom);
+            RecalcularCurva();
+        }
+
+        private Matrix GetWorldToScreenMatrix()
+        {
+            var m = new Matrix(zoom, 0f, 0f, zoom, pan.X, pan.Y);
+            return m;
+        }
+
+        private PointF ScreenToWorld(PointF screenPt)
+        {
+            var m = GetWorldToScreenMatrix();
+            var inv = m.Clone();
+            inv.Invert();
+            PointF[] pts = new PointF[] { screenPt };
+            inv.TransformPoints(pts);
+            inv.Dispose();
+            m.Dispose();
+            return pts[0];
+        }
+
+        private PointF WorldToScreen(PointF worldPt)
+        {
+            var m = GetWorldToScreenMatrix();
+            PointF[] pts = new PointF[] { worldPt };
+            m.TransformPoints(pts);
+            m.Dispose();
+            return pts[0];
+        }
+
+        private int EffectiveDegree()
+        {
+            if (puntosControl.Count <= 1) return 1;
+            int grado = gradoPorDefecto;
+            if (grado >= puntosControl.Count) grado = puntosControl.Count - 1;
+            if (grado < 1) grado = 1;
+            return grado;
+        }
+
+        private void RecalcularCurva()
+        {
+            if (puntosControl.Count >= 2)
+            {
+                int grado = EffectiveDegree();
+                puntosCurva = CCurva.EvaluarCurva(puntosControl, grado, muestrasPorDefecto);
+            }
+            else
+            {
+                puntosCurva.Clear();
+            }
+            lienzo.Invalidate();
+        }
+
+        private void lienzo_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Middle)
+            {
+                paneando = true;
+                inicioPan = e.Location;
+                valorInicioPan = pan;
+                return;
+            }
+
+            if (e.Button == MouseButtons.Left)
+            {
+                PointF mundoClick = ScreenToWorld(e.Location);
+
+                if (modoAgregarPunto)
+                {
+                    PointF puntoInsertar = mundoClick;
+                    int indiceInsert = FindBestInsertIndex(puntoInsertar);
+                    if (indiceInsert < 0) indiceInsert = puntosControl.Count;
+                    puntosControl.Insert(indiceInsert, puntoInsertar);
+                    indicePuntoSeleccionado = indiceInsert;
+                    arrastrando = true;
+
+                    RecalcularCurva();
+                    return;
+                }
+
+                int idx = GetPointAt(mundoClick);
+                if (idx >= 0)
+                {
+                    indicePuntoSeleccionado = idx;
+                    arrastrando = true;
+                    RecalcularCurva();
+                }
+            }
+            else if (e.Button == MouseButtons.Right)
+            {
+                PointF mundoClick = ScreenToWorld(e.Location);
+                int idx = GetPointAt(mundoClick);
+                if (idx >= 0)
+                {
+                    puntosControl.RemoveAt(idx);
+                    indicePuntoSeleccionado = -1;
+                    RecalcularCurva();
+                }
+            }
+        }
+
+        private void lienzo_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (paneando)
+            {
+                int dx = e.X - inicioPan.X;
+                int dy = e.Y - inicioPan.Y;
+                pan = new PointF(valorInicioPan.X + dx, valorInicioPan.Y + dy);
+                lienzo.Invalidate();
+                return;
+            }
+
+            if (arrastrando && indicePuntoSeleccionado >= 0 && indicePuntoSeleccionado < puntosControl.Count)
+            {
+                PointF mundo = ScreenToWorld(e.Location);
+                puntosControl[indicePuntoSeleccionado] = mundo;
+                RecalcularCurva();
+            }
+        }
+
+        private void lienzo_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (paneando && e.Button == MouseButtons.Middle)
+            {
+                paneando = false;
+                return;
+            }
+
+            if (arrastrando)
+            {
+                arrastrando = false;
+                indicePuntoSeleccionado = -1;
+                RecalcularCurva();
+            }
+        }
+
+        private int GetPointAt(PointF mundo)
+        {
+            const int radioPantalla = 8;
+            float radioMundo = radioPantalla / zoom;
+            int idx = -1;
+            double mejorDist = double.MaxValue;
+            for (int i = 0; i < puntosControl.Count; i++)
+            {
+                double dx = puntosControl[i].X - mundo.X;
+                double dy = puntosControl[i].Y - mundo.Y;
+                double d = dx * dx + dy * dy;
+                if (d <= radioMundo * radioMundo && d < mejorDist)
+                {
+                    mejorDist = d;
+                    idx = i;
+                }
+            }
+            return idx;
+        }
+
+        private int FindBestInsertIndex(PointF punto)
+        {
+            if (puntosControl.Count < 2) return puntosControl.Count;
+            double mejorDist = double.MaxValue;
+            int mejorIndice = -1;
+            for (int i = 0; i < puntosControl.Count - 1; i++)
+            {
+                var a = puntosControl[i];
+                var b = puntosControl[i + 1];
+                var proj = ProjectPointOnSegment(punto, a, b);
+                double dx = proj.X - punto.X;
+                double dy = proj.Y - punto.Y;
+                double d = dx * dx + dy * dy;
+                if (d < mejorDist)
+                {
+                    mejorDist = d;
+                    mejorIndice = i + 1;
+                }
+            }
+            return mejorIndice;
+        }
+
+        private PointF ProjectPointOnSegment(PointF p, PointF a, PointF b)
+        {
+            float vx = b.X - a.X;
+            float vy = b.Y - a.Y;
+            float wx = p.X - a.X;
+            float wy = p.Y - a.Y;
+            float denom = vx * vx + vy * vy;
+            if (denom == 0) return a;
+            float t = (vx * wx + vy * wy) / denom;
+            t = Math.Max(0f, Math.Min(1f, t));
+            return new PointF(a.X + t * vx, a.Y + t * vy);
+        }
+
+        private void lienzo_Paint(object sender, PaintEventArgs e)
+        {
+            var g = e.Graphics;
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+
+            using (var m = GetWorldToScreenMatrix())
+            {
+                g.Transform = m;
+
+                if (puntosControl.Count >= 2)
+                {
+                    g.DrawLines(Pens.Gray, puntosControl.ToArray());
+                }
+                if (puntosCurva != null && puntosCurva.Count > 1)
+                {
+                    g.DrawLines(Pens.Red, puntosCurva.ToArray());
+                }
+
+                g.ResetTransform();
+
+                for (int i = 0; i < puntosControl.Count; i++)
+                {
+                    var screenPt = WorldToScreen(puntosControl[i]);
+                    var rect = new RectangleF(screenPt.X - 5, screenPt.Y - 5, 10, 10);
+                    g.FillEllipse(Brushes.Blue, rect);
+                    g.DrawEllipse(Pens.Black, rect);
+                }
+            }
+        }
+
+        private void btnCargarEjemplo_Click(object sender, EventArgs e)
+        {
+            puntosControl.Clear();
+            switch (cmbEjemplos.SelectedIndex)
+            {
+                case 0:
+                    puntosControl.Add(new PointF(120, 300));
+                    puntosControl.Add(new PointF(220, 100));
+                    puntosControl.Add(new PointF(420, 100));
+                    puntosControl.Add(new PointF(520, 300));
+                    break;
+                case 1:
+                    puntosControl.Add(new PointF(100, 300));
+                    puntosControl.Add(new PointF(200, 100));
+                    puntosControl.Add(new PointF(300, 300));
+                    puntosControl.Add(new PointF(400, 100));
+                    puntosControl.Add(new PointF(500, 300));
+                    break;
+                case 2:
+                    puntosControl.Add(new PointF(150, 320));
+                    puntosControl.Add(new PointF(250, 120));
+                    puntosControl.Add(new PointF(450, 120));
+                    puntosControl.Add(new PointF(550, 320));
+                    break;
+            }
+            RecalcularCurva();
+
+            string infoText = "";
+            switch (cmbEjemplos.SelectedIndex)
+            {
+                case 0:
+                    infoText = "Ejemplo 1: Curva en S\r\n\r\n" +
+                               "Descripción: Una curva en forma de S que muestra cómo los puntos de control afectan la forma de la curva.";
+                    break;
+                case 1:
+                    infoText = "Ejemplo 2: Zig-zag\r\n\r\n" +
+                               "Descripción: Una serie de picos y valles que demuestran la respuesta de la curva a los cambios en los puntos de control.";
+                    break;
+                case 2:
+                    infoText = "Ejemplo 3: Arco\r\n\r\n" +
+                               "Descripción: Un arco suave que ilustra la interpolación entre los puntos de control en forma de curva circular.";
+                    break;
+                default:
+                    infoText = "";
+                    break;
+            }
+            txtInfo.Text = infoText;
+        }
+
+        private void btnInfo_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void btnLimpiar_Click(object sender, EventArgs e)
+        {
+            puntosControl.Clear();
+            puntosCurva.Clear();
+            lienzo.Invalidate();
+        }
+
+        private void btnNuevoPunto_Click(object sender, EventArgs e)
+        {
+            modoAgregarPunto = !modoAgregarPunto;
+            btnNuevoPunto.Text = modoAgregarPunto ? "Añadir punto: ON" : "Nuevo punto";
+            lienzo.Cursor = modoAgregarPunto ? Cursors.Cross : Cursors.Default;
+        }
+
+        private void btnZoomMas_Click(object sender, EventArgs e)
+        {
+            float delta = 1.1f;
+            ZoomAroundPoint(delta, new PointF(lienzo.Width / 2f, lienzo.Height / 2f));
+        }
+
+        private void btnZoomMenos_Click(object sender, EventArgs e)
+        {
+            float delta = 0.9f;
+            ZoomAroundPoint(delta, new PointF(lienzo.Width / 2f, lienzo.Height / 2f));
+        }
+
+        private void btnZoomReset_Click(object sender, EventArgs e)
+        {
+            zoom = 1.0f;
+            pan = new PointF(0f, 0f);
+            barraH.Value = 0;
+            barraV.Value = 0;
+            RecalcularCurva();
+        }
+
+        private void ZoomAroundPoint(float factor, PointF screenPoint)
+        {
+            PointF mundoAntes = ScreenToWorld(screenPoint);
+            zoom *= factor;
+            if (zoom < 0.1f) zoom = 0.1f;
+            if (zoom > 50f) zoom = 50f;
+            pan = new PointF(screenPoint.X - mundoAntes.X * zoom, screenPoint.Y - mundoAntes.Y * zoom);
+            UpdateScrollbarsFromPan();
+            RecalcularCurva();
+        }
+
+        private void UpdateScrollbarsFromPan()
+        {
+            int hVal = (int)Math.Round(pan.X);
+            int vVal = (int)Math.Round(pan.Y);
+            hVal = Math.Max(barraH.Minimum, Math.Min(barraH.Maximum, hVal));
+            vVal = Math.Max(barraV.Minimum, Math.Min(barraV.Maximum, vVal));
+            barraH.Value = hVal;
+            barraV.Value = vVal;
+        }
+
+        private void barraH_Scroll(object sender, ScrollEventArgs e)
+        {
+            pan = new PointF(barraH.Value, pan.Y);
+            RecalcularCurva();
+        }
+
+        private void barraV_Scroll(object sender, ScrollEventArgs e)
+        {
+            pan = new PointF(pan.X, barraV.Value);
+            RecalcularCurva();
+        }
+    }
+}

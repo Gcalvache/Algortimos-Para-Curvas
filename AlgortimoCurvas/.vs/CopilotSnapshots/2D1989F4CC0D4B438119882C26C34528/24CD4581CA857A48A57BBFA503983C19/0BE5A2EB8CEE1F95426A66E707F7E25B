@@ -1,0 +1,182 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+
+namespace AlgortimoCurvas
+{
+    internal class CCurva
+    {
+        // Genera un vector de nudos clamped (extremos repetidos) uniformemente en [0,1]
+        public static double[] GenerarNudosClamped(int controlPointCount, int grado)
+        {
+            if (controlPointCount <= 0) return new double[0];
+            int n = controlPointCount - 1; // n = número de control points - 1
+            int m = n + grado + 1; // m = índice máximo de nudos
+            int knotLength = m + 1; // m+1
+
+            double[] u = new double[knotLength];
+
+            int startRepeat = grado + 1; // cantidad de repeticiones al inicio
+            int endRepeat = grado + 1;   // cantidad de repeticiones al final
+
+            // Si no hay intervalos internos (caso mínimo), solo 0...1 repetidos
+            if (knotLength <= startRepeat + endRepeat)
+            {
+                for (int i = 0; i < knotLength; i++) u[i] = (i < startRepeat) ? 0.0 : 1.0;
+                return u;
+            }
+
+            // interior knots count
+            int interiorCount = knotLength - startRepeat - endRepeat;
+
+            // Set start repeated zeros
+            for (int i = 0; i < startRepeat; i++) u[i] = 0.0;
+
+            // interior uniformly spaced in (0,1)
+            for (int i = 0; i < interiorCount; i++)
+            {
+                u[startRepeat + i] = (double)(i + 1) / (interiorCount + 1);
+            }
+
+            // end repeated ones
+            for (int i = knotLength - endRepeat; i < knotLength; i++) u[i] = 1.0;
+
+            return u;
+        }
+
+        // Evalúa la curva B-Spline usando De Boor para un parámetro u dado
+        // controlPoints: lista de puntos de control
+        // degree: grado p
+        // knots: vector de nudos (debe tener longitud controlPoints.Count + degree + 1)
+        public static PointF DeBoor(List<PointF> controlPoints, int degree, double[] knots, double u)
+        {
+            int n = controlPoints.Count - 1;
+            if (n < 0) return PointF.Empty;
+            if (degree < 1) return controlPoints[0];
+
+            // Encontrar el span k tal que knots[k] <= u < knots[k+1]
+            int m = knots.Length - 1;
+            int k = -1;
+
+            // Especial: si u es exactamente 1 (último valor) asignar k = n
+            if (Math.Abs(u - knots[m]) < 1e-12)
+            {
+                k = n;
+            }
+            else
+            {
+                for (int i = 0; i < knots.Length - 1; i++)
+                {
+                    if (u >= knots[i] && u < knots[i + 1])
+                    {
+                        k = i;
+                        break;
+                    }
+                }
+            }
+
+            if (k == -1)
+            {
+                // fallback
+                k = Math.Max(degree, Math.Min(n, knots.Length - degree - 2));
+            }
+
+            // Inicializar d[j] = P_{k-p+j} para j = 0..p
+            PointF[] d = new PointF[degree + 1];
+            for (int j = 0; j <= degree; j++)
+            {
+                int idx = k - degree + j;
+                idx = Math.Max(0, Math.Min(n, idx));
+                d[j] = controlPoints[idx];
+            }
+
+            // De Boor recursion
+            for (int r = 1; r <= degree; r++)
+            {
+                for (int j = degree; j >= r; j--)
+                {
+                    int idx_k_p_j = k - degree + j;
+                    double denom = knots[idx_k_p_j + degree - r + 1] - knots[idx_k_p_j];
+                    double alpha = 0.0;
+                    if (Math.Abs(denom) > 1e-12)
+                    {
+                        alpha = (u - knots[idx_k_p_j]) / denom;
+                    }
+
+                    d[j] = new PointF(
+                        (float)((1.0 - alpha) * d[j - 1].X + alpha * d[j].X),
+                        (float)((1.0 - alpha) * d[j - 1].Y + alpha * d[j].Y)
+                    );
+                }
+            }
+
+            return d[degree];
+        }
+
+        // Evalúa la curva B-Spline y devuelve una lista de puntos que approximan la curva
+        // samples: número de puntos a muestrear a lo largo del parámetro
+        public static List<PointF> EvaluarCurva(List<PointF> controlPoints, int degree, int samples)
+        {
+            var result = new List<PointF>();
+            if (controlPoints == null || controlPoints.Count == 0) return result;
+            if (degree < 1) degree = 1;
+            if (degree >= controlPoints.Count) degree = controlPoints.Count - 1;
+            if (samples < 2) samples = 2;
+
+            double[] knots = GenerarNudosClamped(controlPoints.Count, degree);
+
+            double uStart = knots[degree];
+            double uEnd = knots[controlPoints.Count];
+
+            for (int i = 0; i <= samples; i++)
+            {
+                double t = (double)i / samples;
+                double u = uStart + t * (uEnd - uStart);
+                var p = DeBoor(controlPoints, degree, knots, u);
+                result.Add(p);
+            }
+
+            return result;
+        }
+
+        // De Casteljau para Bezier: evalúa un punto en t en [0,1]
+        public static PointF DeCasteljau(List<PointF> controlPoints, double t)
+        {
+            if (controlPoints == null || controlPoints.Count == 0) return PointF.Empty;
+            int n = controlPoints.Count;
+            // Copia de puntos
+            PointF[] pts = new PointF[n];
+            for (int i = 0; i < n; i++) pts[i] = controlPoints[i];
+
+            for (int r = 1; r < n; r++)
+            {
+                for (int i = 0; i < n - r; i++)
+                {
+                    pts[i] = new PointF(
+                        (float)((1 - t) * pts[i].X + t * pts[i + 1].X),
+                        (float)((1 - t) * pts[i].Y + t * pts[i + 1].Y)
+                    );
+                }
+            }
+
+            return pts[0];
+        }
+
+        // Evalúa la curva Bezier y devuelve una lista de puntos muestreados
+        public static List<PointF> EvaluarBezier(List<PointF> controlPoints, int samples)
+        {
+            var result = new List<PointF>();
+            if (controlPoints == null || controlPoints.Count == 0) return result;
+            if (samples < 2) samples = 2;
+
+            for (int i = 0; i <= samples; i++)
+            {
+                double t = (double)i / samples;
+                var p = DeCasteljau(controlPoints, t);
+                result.Add(p);
+            }
+
+            return result;
+        }
+    }
+}
