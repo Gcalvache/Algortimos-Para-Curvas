@@ -1,0 +1,13 @@
+C:\Users\PC\Desktop\GRAFICA\Algortimos Para Curvas\Algortimos-Para-Curvas\AlgortimoCurvas\AlgortimoCurvas\obj\Debug\AlgortimoCurvas.csproj.AssemblyReference.cache
+C:\Users\PC\Desktop\GRAFICA\Algortimos Para Curvas\Algortimos-Para-Curvas\AlgortimoCurvas\AlgortimoCurvas\obj\Debug\AlgortimoCurvas.frmCurvaBezier.resources
+C:\Users\PC\Desktop\GRAFICA\Algortimos Para Curvas\Algortimos-Para-Curvas\AlgortimoCurvas\AlgortimoCurvas\obj\Debug\AlgortimoCurvas.frmCurvaB_Spline.resources
+C:\Users\PC\Desktop\GRAFICA\Algortimos Para Curvas\Algortimos-Para-Curvas\AlgortimoCurvas\AlgortimoCurvas\obj\Debug\AlgortimoCurvas.frmPestañaPrincipal.resources
+C:\Users\PC\Desktop\GRAFICA\Algortimos Para Curvas\Algortimos-Para-Curvas\AlgortimoCurvas\AlgortimoCurvas\obj\Debug\AlgortimoCurvas.Properties.Resources.resources
+C:\Users\PC\Desktop\GRAFICA\Algortimos Para Curvas\Algortimos-Para-Curvas\AlgortimoCurvas\AlgortimoCurvas\obj\Debug\AlgortimoCurvas.csproj.GenerateResource.cache
+C:\Users\PC\Desktop\GRAFICA\Algortimos Para Curvas\Algortimos-Para-Curvas\AlgortimoCurvas\AlgortimoCurvas\obj\Debug\AlgortimoCurvas.csproj.CoreCompileInputs.cache
+C:\Users\PC\Desktop\GRAFICA\Algortimos Para Curvas\Algortimos-Para-Curvas\AlgortimoCurvas\AlgortimoCurvas\bin\Debug\AlgortimoCurvas.exe.config
+C:\Users\PC\Desktop\GRAFICA\Algortimos Para Curvas\Algortimos-Para-Curvas\AlgortimoCurvas\AlgortimoCurvas\bin\Debug\AlgortimoCurvas.exe
+C:\Users\PC\Desktop\GRAFICA\Algortimos Para Curvas\Algortimos-Para-Curvas\AlgortimoCurvas\AlgortimoCurvas\bin\Debug\AlgortimoCurvas.pdb
+C:\Users\PC\Desktop\GRAFICA\Algortimos Para Curvas\Algortimos-Para-Curvas\AlgortimoCurvas\AlgortimoCurvas\obj\Debug\AlgortimoCurvas.exe
+C:\Users\PC\Desktop\GRAFICA\Algortimos Para Curvas\Algortimos-Para-Curvas\AlgortimoCurvas\AlgortimoCurvas\obj\Debug\AlgortimoCurvas.pdb
+C:\Users\PC\Desktop\GRAFICA\Algortimos Para Curvas\Algortimos-Para-Curvas\AlgortimoCurvas\AlgortimoCurvas\obj\Debug\AlgortimoCurvas.exe.config
