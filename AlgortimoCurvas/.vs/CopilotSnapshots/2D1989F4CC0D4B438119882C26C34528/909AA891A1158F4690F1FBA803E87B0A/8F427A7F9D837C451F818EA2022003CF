@@ -169,7 +169,7 @@
             this.btnZoomReset.Name = "btnZoomReset";
             this.btnZoomReset.Size = new System.Drawing.Size(165, 24);
             this.btnZoomReset.TabIndex = 10;
-            this.btnZoomReset.Text = "Reiniciar Zoom";
+            this.btnZoomReset.Text = "Reset Zoom";
             this.btnZoomReset.UseVisualStyleBackColor = true;
             this.btnZoomReset.Click += new System.EventHandler(this.btnZoomReset_Click);
             // 

@@ -6,9 +6,6 @@ using System.Windows.Forms;
 
 namespace AlgortimoCurvas
 {
-  
-    /// Formulario para interacción con curvas Bezier.
-    
     public partial class frmCurvaBezier : Form
     {
         private List<PointF> puntosControl = new List<PointF>();
@@ -37,11 +34,6 @@ namespace AlgortimoCurvas
             txtInfo.Text = "Bezier (De Casteljau)\r\n\r\nDescripción técnica:\r\nImplementación del algoritmo De Casteljau para evaluar curvas Bezier.\r\nEl algoritmo interpola linealmente entre puntos de control de forma recursiva hasta obtener el punto en t.\r\n\r\nCasos de uso en la aplicación:\r\n- Presets para ver comportamiento con distintos conjuntos de puntos de control.\r\n- Añadir/arrastrar/eliminar puntos para observar la actualización en tiempo real.";
 
             lienzo.MouseEnter += (s, e) => lienzo.Focus();
-        }
-
-        private bool PuntoValido(PointF p)
-        {
-            return !(float.IsNaN(p.X) || float.IsNaN(p.Y) || float.IsInfinity(p.X) || float.IsInfinity(p.Y));
         }
 
         protected override void OnMouseWheel(MouseEventArgs e)
@@ -109,104 +101,81 @@ namespace AlgortimoCurvas
 
         private void lienzo_MouseDown(object sender, MouseEventArgs e)
         {
-            try
+            if (e.Button == MouseButtons.Middle)
             {
-                if (e.Button == MouseButtons.Middle)
+                paneando = true;
+                inicioPan = e.Location;
+                valorInicioPan = pan;
+                return;
+            }
+
+            if (e.Button == MouseButtons.Left)
+            {
+                PointF mundoClick = ScreenToWorld(e.Location);
+
+                if (modoAgregarPunto)
                 {
-                    paneando = true;
-                    inicioPan = e.Location;
-                    valorInicioPan = pan;
+                    int indiceInsert = FindBestInsertIndex(mundoClick);
+                    if (indiceInsert < 0) indiceInsert = puntosControl.Count;
+                    puntosControl.Insert(indiceInsert, mundoClick);
+                    indicePuntoSeleccionado = indiceInsert;
+                    arrastrando = true;
+                    RecalcularCurva();
                     return;
                 }
 
-                if (e.Button == MouseButtons.Left)
+                int idx = GetPointAt(mundoClick);
+                if (idx >= 0)
                 {
-                    PointF mundoClick = ScreenToWorld(e.Location);
-                    if (!PuntoValido(mundoClick)) return;
-
-                    if (modoAgregarPunto)
-                    {
-                        int indiceInsert = FindBestInsertIndex(mundoClick);
-                        if (indiceInsert < 0) indiceInsert = puntosControl.Count;
-                        puntosControl.Insert(indiceInsert, mundoClick);
-                        indicePuntoSeleccionado = indiceInsert;
-                        arrastrando = true;
-                        RecalcularCurva();
-                        return;
-                    }
-
-                    int idx = GetPointAt(mundoClick);
-                    if (idx >= 0)
-                    {
-                        indicePuntoSeleccionado = idx;
-                        arrastrando = true;
-                    }
-                }
-                else if (e.Button == MouseButtons.Right)
-                {
-                    PointF mundoClick = ScreenToWorld(e.Location);
-                    int idx = GetPointAt(mundoClick);
-                    if (idx >= 0)
-                    {
-                        puntosControl.RemoveAt(idx);
-                        indicePuntoSeleccionado = -1;
-                        RecalcularCurva();
-                    }
+                    indicePuntoSeleccionado = idx;
+                    arrastrando = true;
                 }
             }
-            catch (Exception ex)
+            else if (e.Button == MouseButtons.Right)
             {
-                MessageBox.Show("Error en la operación del lienzo: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                PointF mundoClick = ScreenToWorld(e.Location);
+                int idx = GetPointAt(mundoClick);
+                if (idx >= 0)
+                {
+                    puntosControl.RemoveAt(idx);
+                    indicePuntoSeleccionado = -1;
+                    RecalcularCurva();
+                }
             }
         }
 
         private void lienzo_MouseMove(object sender, MouseEventArgs e)
         {
-            try
+            if (paneando)
             {
-                if (paneando)
-                {
-                    int dx = e.X - inicioPan.X;
-                    int dy = e.Y - inicioPan.Y;
-                    pan = new PointF(valorInicioPan.X + dx, valorInicioPan.Y + dy);
-                    lienzo.Invalidate();
-                    return;
-                }
-
-                if (arrastrando && indicePuntoSeleccionado >= 0 && indicePuntoSeleccionado < puntosControl.Count)
-                {
-                    PointF mundo = ScreenToWorld(e.Location);
-                    if (!PuntoValido(mundo)) return;
-                    puntosControl[indicePuntoSeleccionado] = mundo;
-                    RecalcularCurva();
-                }
+                int dx = e.X - inicioPan.X;
+                int dy = e.Y - inicioPan.Y;
+                pan = new PointF(valorInicioPan.X + dx, valorInicioPan.Y + dy);
+                lienzo.Invalidate();
+                return;
             }
-            catch (Exception ex)
+
+            if (arrastrando && indicePuntoSeleccionado >= 0 && indicePuntoSeleccionado < puntosControl.Count)
             {
-                MessageBox.Show("Error al mover punto: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                PointF mundo = ScreenToWorld(e.Location);
+                puntosControl[indicePuntoSeleccionado] = mundo;
+                RecalcularCurva();
             }
         }
 
         private void lienzo_MouseUp(object sender, MouseEventArgs e)
         {
-            try
+            if (paneando && e.Button == MouseButtons.Middle)
             {
-                if (paneando && e.Button == MouseButtons.Middle)
-                {
-                    paneando = false;
-                    return;
-                }
-
-                if (arrastrando)
-                {
-                    arrastrando = false;
-                    indicePuntoSeleccionado = -1;
-                    RecalcularCurva();
-                }
+                paneando = false;
+                return;
             }
-            catch (Exception ex)
+
+            if (arrastrando)
             {
-                MessageBox.Show("Error al soltar el botón del mouse: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                arrastrando = false;
+                indicePuntoSeleccionado = -1;
+                RecalcularCurva();
             }
         }
 
@@ -297,102 +266,90 @@ namespace AlgortimoCurvas
 
         private void btnCargarEjemplo_Click(object sender, EventArgs e)
         {
-            try
+            puntosControl.Clear();
+            switch (cmbEjemplos.SelectedIndex)
             {
-                puntosControl.Clear();
-                switch (cmbEjemplos.SelectedIndex)
-                {
-                    case 0:
-                        puntosControl.Add(new PointF(120, 300));
-                        puntosControl.Add(new PointF(220, 100));
-                        puntosControl.Add(new PointF(420, 100));
-                        puntosControl.Add(new PointF(520, 300));
-                        break;
-                    case 1:
-                        puntosControl.Add(new PointF(100, 300));
-                        puntosControl.Add(new PointF(200, 100));
-                        puntosControl.Add(new PointF(300, 300));
-                        puntosControl.Add(new PointF(400, 100));
-                        puntosControl.Add(new PointF(500, 300));
-                        break;
-                    case 2:
-                        puntosControl.Add(new PointF(150, 320));
-                        puntosControl.Add(new PointF(250, 120));
-                        puntosControl.Add(new PointF(450, 120));
-                        puntosControl.Add(new PointF(550, 320));
-                        break;
-                }
-                RecalcularCurva();
+                case 0:
+                    puntosControl.Add(new PointF(120, 300));
+                    puntosControl.Add(new PointF(220, 100));
+                    puntosControl.Add(new PointF(420, 100));
+                    puntosControl.Add(new PointF(520, 300));
+                    break;
+                case 1:
+                    puntosControl.Add(new PointF(100, 300));
+                    puntosControl.Add(new PointF(200, 100));
+                    puntosControl.Add(new PointF(300, 300));
+                    puntosControl.Add(new PointF(400, 100));
+                    puntosControl.Add(new PointF(500, 300));
+                    break;
+                case 2:
+                    puntosControl.Add(new PointF(150, 320));
+                    puntosControl.Add(new PointF(250, 120));
+                    puntosControl.Add(new PointF(450, 120));
+                    puntosControl.Add(new PointF(550, 320));
+                    break;
             }
-            catch (Exception ex)
+            RecalcularCurva();
+
+            string infoText = "";
+            switch (cmbEjemplos.SelectedIndex)
             {
-                MessageBox.Show("Error al cargar ejemplo: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                case 0:
+                    infoText = "Ejemplo A: Simple\r\n\r\n" +
+                               "Descripción: Una curva simple de Bézier.";
+                    break;
+                case 1:
+                    infoText = "Ejemplo B: Curva en S\r\n\r\n" +
+                               "Descripción: Una curva en forma de S.";
+                    break;
+                case 2:
+                    infoText = "Ejemplo C: Arco\r\n\r\n" +
+                               "Descripción: Un arco suave.";
+                    break;
+                default:
+                    infoText = "";
+                    break;
             }
+            txtInfo.Text = infoText;
+        }
+
+        private void btnInfo_Click(object sender, EventArgs e)
+        {
         }
 
         private void btnLimpiar_Click(object sender, EventArgs e)
         {
-            try
-            {
-                puntosControl.Clear();
-                puntosCurva.Clear();
-                lienzo.Invalidate();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error al limpiar: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            puntosControl.Clear();
+            puntosCurva.Clear();
+            lienzo.Invalidate();
         }
 
         private void btnNuevoPunto_Click(object sender, EventArgs e)
         {
-            try
-            {
-                modoAgregarPunto = !modoAgregarPunto;
-                btnNuevoPunto.Text = modoAgregarPunto ? "Añadir punto: ON" : "Nuevo punto";
-                lienzo.Cursor = modoAgregarPunto ? Cursors.Cross : Cursors.Default;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error al cambiar modo de añadir punto: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            modoAgregarPunto = !modoAgregarPunto;
+            btnNuevoPunto.Text = modoAgregarPunto ? "Añadir punto: ON" : "Nuevo punto";
+            lienzo.Cursor = modoAgregarPunto ? Cursors.Cross : Cursors.Default;
         }
 
         private void btnZoomMas_Click(object sender, EventArgs e)
         {
-            try
-            {
-                ZoomAroundPoint(1.1f, new PointF(lienzo.Width / 2f, lienzo.Height / 2f));
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error al aplicar zoom: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            float delta = 1.1f;
+            ZoomAroundPoint(delta, new PointF(lienzo.Width / 2f, lienzo.Height / 2f));
         }
 
         private void btnZoomMenos_Click(object sender, EventArgs e)
         {
-            try
-            {
-                ZoomAroundPoint(0.9f, new PointF(lienzo.Width / 2f, lienzo.Height / 2f));
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error al aplicar zoom: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            float delta = 0.9f;
+            ZoomAroundPoint(delta, new PointF(lienzo.Width / 2f, lienzo.Height / 2f));
         }
 
         private void btnZoomReset_Click(object sender, EventArgs e)
         {
-            try
-            {
-                zoom = 1.0f;
-                RecalcularCurva();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error al reiniciar zoom: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            zoom = 1.0f;
+            pan = new PointF(0f, 0f);
+            barraH.Value = 0;
+            barraV.Value = 0;
+            RecalcularCurva();
         }
 
         private void ZoomAroundPoint(float factor, PointF screenPoint)
@@ -418,28 +375,14 @@ namespace AlgortimoCurvas
 
         private void barraH_Scroll(object sender, ScrollEventArgs e)
         {
-            try
-            {
-                pan = new PointF(barraH.Value, pan.Y);
-                RecalcularCurva();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error en desplazamiento horizontal: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            pan = new PointF(barraH.Value, pan.Y);
+            RecalcularCurva();
         }
 
         private void barraV_Scroll(object sender, ScrollEventArgs e)
         {
-            try
-            {
-                pan = new PointF(pan.X, barraV.Value);
-                RecalcularCurva();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error en desplazamiento vertical: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            pan = new PointF(pan.X, barraV.Value);
+            RecalcularCurva();
         }
     }
 }

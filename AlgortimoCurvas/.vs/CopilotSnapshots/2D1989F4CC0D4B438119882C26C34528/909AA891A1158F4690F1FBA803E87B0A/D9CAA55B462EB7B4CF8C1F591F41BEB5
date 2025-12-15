@@ -6,9 +6,9 @@ using System.Windows.Forms;
 
 namespace AlgortimoCurvas
 {
-  
+    /// <summary>
     /// Formulario para interacción con curvas Bezier.
-    
+    /// </summary>
     public partial class frmCurvaBezier : Form
     {
         private List<PointF> puntosControl = new List<PointF>();
@@ -387,33 +387,15 @@ namespace AlgortimoCurvas
             try
             {
                 zoom = 1.0f;
+                pan = new PointF(0f, 0f);
+                if (barraH != null) barraH.Value = 0;
+                if (barraV != null) barraV.Value = 0;
                 RecalcularCurva();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al reiniciar zoom: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Error al resetear zoom: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-        }
-
-        private void ZoomAroundPoint(float factor, PointF screenPoint)
-        {
-            PointF mundoAntes = ScreenToWorld(screenPoint);
-            zoom *= factor;
-            if (zoom < 0.1f) zoom = 0.1f;
-            if (zoom > 50f) zoom = 50f;
-            pan = new PointF(screenPoint.X - mundoAntes.X * zoom, screenPoint.Y - mundoAntes.Y * zoom);
-            UpdateScrollbarsFromPan();
-            RecalcularCurva();
-        }
-
-        private void UpdateScrollbarsFromPan()
-        {
-            int hVal = (int)Math.Round(pan.X);
-            int vVal = (int)Math.Round(pan.Y);
-            hVal = Math.Max(barraH.Minimum, Math.Min(barraH.Maximum, hVal));
-            vVal = Math.Max(barraV.Minimum, Math.Min(barraV.Maximum, vVal));
-            barraH.Value = hVal;
-            barraV.Value = vVal;
         }
 
         private void barraH_Scroll(object sender, ScrollEventArgs e)

@@ -1,12 +1,11 @@
 ﻿namespace AlgortimoCurvas
 {
-    partial class frmCurvaB_Spline
+    partial class frmCurvaBezier
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
-
         private System.Windows.Forms.PictureBox lienzo;
         private System.Windows.Forms.Button btnLimpiar;
         private System.Windows.Forms.Button btnNuevoPunto;
@@ -92,7 +91,6 @@
             // btnLimpiar
             // 
             this.btnLimpiar.Location = new System.Drawing.Point(600, 260);
-            this.btnLimpiar.Margin = new System.Windows.Forms.Padding(2);
             this.btnLimpiar.Name = "btnLimpiar";
             this.btnLimpiar.Size = new System.Drawing.Size(165, 24);
             this.btnLimpiar.TabIndex = 3;
@@ -103,7 +101,6 @@
             // btnNuevoPunto
             // 
             this.btnNuevoPunto.Location = new System.Drawing.Point(600, 228);
-            this.btnNuevoPunto.Margin = new System.Windows.Forms.Padding(2);
             this.btnNuevoPunto.Name = "btnNuevoPunto";
             this.btnNuevoPunto.Size = new System.Drawing.Size(165, 24);
             this.btnNuevoPunto.TabIndex = 4;
@@ -169,11 +166,11 @@
             this.btnZoomReset.Name = "btnZoomReset";
             this.btnZoomReset.Size = new System.Drawing.Size(165, 24);
             this.btnZoomReset.TabIndex = 10;
-            this.btnZoomReset.Text = "Reiniciar Zoom";
+            this.btnZoomReset.Text = "Reset Zoom";
             this.btnZoomReset.UseVisualStyleBackColor = true;
             this.btnZoomReset.Click += new System.EventHandler(this.btnZoomReset_Click);
             // 
-            // frmCurvaB_Spline
+            // frmCurvaBezier
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -190,9 +187,9 @@
             this.Controls.Add(this.btnLimpiar);
             this.Controls.Add(this.lienzo);
             this.Margin = new System.Windows.Forms.Padding(2);
-            this.Name = "frmCurvaB_Spline";
+            this.Name = "frmCurvaBezier";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "CURVA B-SPLINE";
+            this.Text = "CURVA BEZIER";
             ((System.ComponentModel.ISupportInitialize)(this.lienzo)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

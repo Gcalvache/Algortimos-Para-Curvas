@@ -4,28 +4,17 @@ using System.Drawing;
 
 namespace AlgortimoCurvas
 {
-    
+    /// <summary>
     /// Clase que agrupa implementaciones de algoritmos de curvas.
     /// Contiene métodos para evaluar curvas B-Spline (De Boor) y Bezier (De Casteljau).
     /// Los métodos realizan validaciones básicas de entrada y devuelven listas de puntos
     /// que pueden ser dibujadas por la interfaz gráfica.
-    
+    /// </summary>
     internal class CCurva
     {
-        private static bool PuntosValidos(List<PointF> puntos)
-        {
-            if (puntos == null) return false;
-            foreach (var p in puntos)
-            {
-                if (float.IsNaN(p.X) || float.IsNaN(p.Y) || float.IsInfinity(p.X) || float.IsInfinity(p.Y))
-                    return false;
-            }
-            return true;
-        }
-
-       
+        /// <summary>
         /// Genera un vector de nudos tipo "clamped" uniformes en el intervalo [0,1].
-       
+        /// </summary>
         public static double[] GenerarNudosClamped(int cantidadPuntosControl, int grado)
         {
             if (cantidadPuntosControl <= 0) return new double[0];
@@ -58,16 +47,15 @@ namespace AlgortimoCurvas
             return nudos;
         }
 
+        /// <summary>
         /// Evalúa un punto de la curva B-Spline en el parámetro u usando el algoritmo de De Boor.
         /// Requiere un vector de nudos adecuado.
-        
+        /// </summary>
         public static PointF DeBoor(List<PointF> puntosControl, int grado, double[] nudos, double u)
         {
-            if (!PuntosValidos(puntosControl)) return PointF.Empty;
             int n = puntosControl.Count - 1;
             if (n < 0) return PointF.Empty;
             if (grado < 1) return puntosControl[0];
-            if (nudos == null || nudos.Length == 0) return PointF.Empty;
 
             int m = nudos.Length - 1;
             int k = -1;
@@ -123,13 +111,13 @@ namespace AlgortimoCurvas
             return d[grado];
         }
 
+        /// <summary>
         /// Muestrea la curva B-Spline en un número de muestras especificado.
         /// Realiza validaciones mínimas sobre grado y muestras.
-       
+        /// </summary>
         public static List<PointF> EvaluarCurva(List<PointF> puntosControl, int grado, int muestras)
         {
             var resultado = new List<PointF>();
-            if (!PuntosValidos(puntosControl)) return resultado;
             if (puntosControl == null || puntosControl.Count == 0) return resultado;
             if (grado < 1) grado = 1;
             if (grado >= puntosControl.Count) grado = puntosControl.Count - 1;
@@ -151,12 +139,12 @@ namespace AlgortimoCurvas
             return resultado;
         }
 
+        /// <summary>
         /// Evalúa un punto en una curva Bezier usando el algoritmo de De Casteljau.
         /// Estable y fácil de razonar; usado para muestrear curvas Bezier.
- 
+        /// </summary>
         public static PointF DeCasteljau(List<PointF> puntosControl, double t)
         {
-            if (!PuntosValidos(puntosControl)) return PointF.Empty;
             if (puntosControl == null || puntosControl.Count == 0) return PointF.Empty;
             int n = puntosControl.Count;
             PointF[] pts = new PointF[n];
@@ -176,12 +164,12 @@ namespace AlgortimoCurvas
             return pts[0];
         }
 
+        /// <summary>
         /// Muestrea una curva Bezier en un número de muestras dado.
-
+        /// </summary>
         public static List<PointF> EvaluarBezier(List<PointF> puntosControl, int muestras)
         {
             var resultado = new List<PointF>();
-            if (!PuntosValidos(puntosControl)) return resultado;
             if (puntosControl == null || puntosControl.Count == 0) return resultado;
             if (muestras < 2) muestras = 2;
 
