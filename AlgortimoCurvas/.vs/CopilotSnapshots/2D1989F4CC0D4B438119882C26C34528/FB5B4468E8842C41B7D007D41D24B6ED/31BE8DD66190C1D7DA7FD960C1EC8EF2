@@ -1,31 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace AlgortimoCurvas
 {
-    public partial class frmCurvaBezier : Form
+    public partial class frmCurvaB_Spline : Form
     {
         private List<PointF> controlPoints = new List<PointF>();
         private List<PointF> curvePoints = new List<PointF>();
+
         private int selectedPointIndex = -1;
         private bool isDragging = false;
-        private bool addPointMode = false;
+
+        // Default number of samples for curve rendering
         private int defaultSamples = 200;
 
-        public frmCurvaBezier()
+        // New: mode to add points when enabled
+        private bool addPointMode = false;
+
+        public frmCurvaB_Spline()
         {
             InitializeComponent();
-            btnAddPoint.Text = "Nuevo punto";
+            btnAddOnCurve.Text = "Nuevo punto (en curva)";
         }
 
         private void RecalcularCurva()
         {
             if (controlPoints.Count >= 2)
             {
-                int samples = defaultSamples;
-                curvePoints = CCurva.EvaluarBezier(controlPoints, samples);
+                int degree = (int)nudDegree.Value;
+                curvePoints = CCurva.EvaluarCurva(controlPoints, degree, defaultSamples);
             }
             else
             {
@@ -40,20 +46,39 @@ namespace AlgortimoCurvas
             {
                 if (addPointMode)
                 {
-                    int insertIndex = FindBestInsertIndex(new PointF(e.X, e.Y));
+                    // If curve exists and click is near it, project onto curve samples
+                    int curveIdx = GetCurvePointAt(e.Location);
+                    PointF insertPos;
+                    if (curveIdx >= 0 && curvePoints != null && curvePoints.Count > 0)
+                    {
+                        insertPos = curvePoints[curveIdx];
+                    }
+                    else
+                    {
+                        insertPos = new PointF(e.X, e.Y);
+                    }
+
+                    int insertIndex = FindBestInsertIndex(insertPos);
                     if (insertIndex < 0) insertIndex = controlPoints.Count;
-                    controlPoints.Insert(insertIndex, new PointF(e.X, e.Y));
+                    controlPoints.Insert(insertIndex, insertPos);
                     selectedPointIndex = insertIndex;
                     isDragging = true;
+
                     RecalcularCurva();
                     return;
                 }
 
+                // Normal mode: only select existing control points for dragging
                 int idx = GetPointAt(e.Location);
                 if (idx >= 0)
                 {
                     selectedPointIndex = idx;
                     isDragging = true;
+                    RecalcularCurva();
+                }
+                else
+                {
+                    // do nothing on empty space when not in add mode
                 }
             }
             else if (e.Button == MouseButtons.Right)
@@ -106,8 +131,44 @@ namespace AlgortimoCurvas
             return idx;
         }
 
+        private int GetCurvePointAt(Point location)
+        {
+            if (curvePoints == null || curvePoints.Count == 0) return -1;
+            const int hitRadius = 6;
+            int idx = -1;
+            double bestDist = double.MaxValue;
+            for (int i = 0; i < curvePoints.Count; i++)
+            {
+                double dx = curvePoints[i].X - location.X;
+                double dy = curvePoints[i].Y - location.Y;
+                double d = dx * dx + dy * dy;
+                if (d <= hitRadius * hitRadius && d < bestDist)
+                {
+                    bestDist = d;
+                    idx = i;
+                }
+            }
+            return idx;
+        }
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            controlPoints.Clear();
+            curvePoints.Clear();
+            picCanvas.Invalidate();
+        }
+
+        private void btnAddOnCurve_Click(object sender, EventArgs e)
+        {
+            // Toggle add point mode
+            addPointMode = !addPointMode;
+            btnAddOnCurve.Text = addPointMode ? "Añadir punto: ON" : "Nuevo punto (en curva)";
+            picCanvas.Cursor = addPointMode ? Cursors.Cross : Cursors.Default;
+        }
+
         private int FindBestInsertIndex(PointF point)
         {
+            // Find the control polygon segment whose projection is nearest to the given point
             if (controlPoints.Count < 2) return controlPoints.Count;
             double bestDist = double.MaxValue;
             int bestIndex = -1;
@@ -141,26 +202,12 @@ namespace AlgortimoCurvas
             return new PointF(a.X + t * vx, a.Y + t * vy);
         }
 
-        private void btnClear_Click(object sender, EventArgs e)
-        {
-            controlPoints.Clear();
-            curvePoints.Clear();
-            picCanvas.Invalidate();
-        }
-
-        private void btnAddPoint_Click(object sender, EventArgs e)
-        {
-            addPointMode = !addPointMode;
-            btnAddPoint.Text = addPointMode ? "Añadir punto: ON" : "Nuevo punto";
-            picCanvas.Cursor = addPointMode ? Cursors.Cross : Cursors.Default;
-        }
-
         private void picCanvas_Paint(object sender, PaintEventArgs e)
         {
             var g = e.Graphics;
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
-            // dibujar control points
+            // Dibujar puntos de control
             for (int i = 0; i < controlPoints.Count; i++)
             {
                 var p = controlPoints[i];
@@ -169,22 +216,21 @@ namespace AlgortimoCurvas
                 g.DrawEllipse(Pens.Black, rect);
             }
 
-            // dibujar poligono de control
+            // Dibujar líneas entre puntos de control
             if (controlPoints.Count >= 2)
             {
                 g.DrawLines(Pens.Gray, controlPoints.ToArray());
             }
 
-            // dibujar curva bezier
+            // Dibujar curva si existe
             if (curvePoints != null && curvePoints.Count > 1)
             {
-                g.DrawLines(Pens.Green, curvePoints.ToArray());
+                g.DrawLines(Pens.Red, curvePoints.ToArray());
             }
         }
 
         private void nudDegree_ValueChanged(object sender, EventArgs e)
         {
-            // For Bezier we generally use number of control points-1 as degree
             RecalcularCurva();
         }
     }
