@@ -1,0 +1,101 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Windows.Forms;
+
+namespace AlgortimoCurvas
+{
+    public partial class frmCurvaB_Spline : Form
+    {
+        private List<PointF> controlPoints = new List<PointF>();
+        private List<PointF> curvePoints = new List<PointF>();
+
+        public frmCurvaB_Spline()
+        {
+            InitializeComponent();
+        }
+
+        private void picCanvas_MouseClick(object sender, MouseEventArgs e)
+        {
+            // Click izquierdo añade punto de control
+            if (e.Button == MouseButtons.Left)
+            {
+                controlPoints.Add(e.Location);
+                curvePoints.Clear();
+                picCanvas.Invalidate();
+            }
+            // Click derecho elimina el punto más cercano
+            else if (e.Button == MouseButtons.Right && controlPoints.Count > 0)
+            {
+                int nearestIndex = -1;
+                double bestDist = double.MaxValue;
+                for (int i = 0; i < controlPoints.Count; i++)
+                {
+                    double dx = controlPoints[i].X - e.X;
+                    double dy = controlPoints[i].Y - e.Y;
+                    double d = dx * dx + dy * dy;
+                    if (d < bestDist)
+                    {
+                        bestDist = d;
+                        nearestIndex = i;
+                    }
+                }
+                if (nearestIndex >= 0)
+                {
+                    controlPoints.RemoveAt(nearestIndex);
+                    curvePoints.Clear();
+                    picCanvas.Invalidate();
+                }
+            }
+        }
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            controlPoints.Clear();
+            curvePoints.Clear();
+            picCanvas.Invalidate();
+        }
+
+        private void btnDraw_Click(object sender, EventArgs e)
+        {
+            if (controlPoints.Count < 2)
+            {
+                MessageBox.Show("Agrega al menos 2 puntos de control.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            int degree = (int)nudDegree.Value;
+            int samples = (int)nudSamples.Value;
+
+            curvePoints = CCurva.EvaluarCurva(controlPoints, degree, samples);
+            picCanvas.Invalidate();
+        }
+
+        private void picCanvas_Paint(object sender, PaintEventArgs e)
+        {
+            var g = e.Graphics;
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+            // Dibujar puntos de control
+            for (int i = 0; i < controlPoints.Count; i++)
+            {
+                var p = controlPoints[i];
+                var rect = new RectangleF(p.X - 4, p.Y - 4, 8, 8);
+                g.FillEllipse(Brushes.Blue, rect);
+                g.DrawEllipse(Pens.Black, rect);
+            }
+
+            // Dibujar líneas entre puntos de control
+            if (controlPoints.Count >= 2)
+            {
+                g.DrawLines(Pens.Gray, controlPoints.ToArray());
+            }
+
+            // Dibujar curva si existe
+            if (curvePoints != null && curvePoints.Count > 1)
+            {
+                g.DrawLines(Pens.Red, curvePoints.ToArray());
+            }
+        }
+    }
+}

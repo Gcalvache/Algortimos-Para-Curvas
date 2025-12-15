@@ -20,9 +20,14 @@ namespace AlgortimoCurvas
         // New: mode to add points when enabled
         private bool addPointMode = false;
 
+        // New: dragging entire curve
+        private bool draggingCurve = false;
+        private PointF lastMousePos;
+
         public frmCurvaB_Spline()
         {
             InitializeComponent();
+            // Ensure button initial text reflects mode off
             btnAddOnCurve.Text = "Nuevo punto (en curva)";
         }
 
@@ -46,40 +51,40 @@ namespace AlgortimoCurvas
             {
                 if (addPointMode)
                 {
-                    // If curve exists and click is near it, project onto curve samples
-                    int curveIdx = GetCurvePointAt(e.Location);
-                    PointF insertPos;
-                    if (curveIdx >= 0 && curvePoints != null && curvePoints.Count > 0)
-                    {
-                        insertPos = curvePoints[curveIdx];
-                    }
-                    else
-                    {
-                        insertPos = new PointF(e.X, e.Y);
-                    }
-
-                    int insertIndex = FindBestInsertIndex(insertPos);
+                    // Insert a new control point at click location (best insert index)
+                    int insertIndex = FindBestInsertIndex(new PointF(e.X, e.Y));
                     if (insertIndex < 0) insertIndex = controlPoints.Count;
-                    controlPoints.Insert(insertIndex, insertPos);
+                    controlPoints.Insert(insertIndex, new PointF(e.X, e.Y));
                     selectedPointIndex = insertIndex;
-                    isDragging = true;
-
+                    isDragging = true; // allow immediate dragging
                     RecalcularCurva();
                     return;
                 }
 
-                // Normal mode: only select existing control points for dragging
                 int idx = GetPointAt(e.Location);
                 if (idx >= 0)
                 {
                     selectedPointIndex = idx;
                     isDragging = true;
-                    RecalcularCurva();
                 }
                 else
                 {
-                    // do nothing on empty space when not in add mode
+                    // If clicked near the curve, start dragging the whole curve
+                    int curveIdx = GetCurvePointAt(e.Location);
+                    if (curveIdx >= 0 && curvePoints != null && curvePoints.Count > 0)
+                    {
+                        draggingCurve = true;
+                        lastMousePos = e.Location;
+                    }
+                    else
+                    {
+                        // Click in empty space: add a new control point at that position
+                        controlPoints.Add(e.Location);
+                        selectedPointIndex = controlPoints.Count - 1;
+                        isDragging = true;
+                    }
                 }
+                RecalcularCurva();
             }
             else if (e.Button == MouseButtons.Right)
             {
@@ -100,14 +105,30 @@ namespace AlgortimoCurvas
                 controlPoints[selectedPointIndex] = e.Location;
                 RecalcularCurva();
             }
+            else if (draggingCurve)
+            {
+                // Translate all control points by mouse delta
+                float dx = e.X - lastMousePos.X;
+                float dy = e.Y - lastMousePos.Y;
+                if (Math.Abs(dx) > 0 || Math.Abs(dy) > 0)
+                {
+                    for (int i = 0; i < controlPoints.Count; i++)
+                    {
+                        controlPoints[i] = new PointF(controlPoints[i].X + dx, controlPoints[i].Y + dy);
+                    }
+                    lastMousePos = e.Location;
+                    RecalcularCurva();
+                }
+            }
         }
 
         private void picCanvas_MouseUp(object sender, MouseEventArgs e)
         {
-            if (isDragging)
+            if (isDragging || draggingCurve)
             {
                 isDragging = false;
                 selectedPointIndex = -1;
+                draggingCurve = false;
                 RecalcularCurva();
             }
         }
@@ -163,12 +184,13 @@ namespace AlgortimoCurvas
             // Toggle add point mode
             addPointMode = !addPointMode;
             btnAddOnCurve.Text = addPointMode ? "Añadir punto: ON" : "Nuevo punto (en curva)";
+            // Change cursor to indicate mode
             picCanvas.Cursor = addPointMode ? Cursors.Cross : Cursors.Default;
         }
 
         private int FindBestInsertIndex(PointF point)
         {
-            // Find the control polygon segment whose projection is nearest to the given point
+            // Find the control polygon segment whose midpoint is nearest to the given point
             if (controlPoints.Count < 2) return controlPoints.Count;
             double bestDist = double.MaxValue;
             int bestIndex = -1;
@@ -176,6 +198,7 @@ namespace AlgortimoCurvas
             {
                 var a = controlPoints[i];
                 var b = controlPoints[i + 1];
+                // Project point onto segment to get a better insert location
                 var proj = ProjectPointOnSegment(point, a, b);
                 double dx = proj.X - point.X;
                 double dy = proj.Y - point.Y;
@@ -226,6 +249,24 @@ namespace AlgortimoCurvas
             if (curvePoints != null && curvePoints.Count > 1)
             {
                 g.DrawLines(Pens.Red, curvePoints.ToArray());
+            }
+
+            // Visual cue when in add point mode
+            if (addPointMode)
+            {
+                // small info text
+                using (var sf = new StringFormat())
+                using (var brush = new SolidBrush(Color.FromArgb(200, Color.White)))
+                using (var pen = new Pen(Color.Black))
+                {
+                    var text = "Modo añadir punto: Click para insertar";
+                    var font = this.Font;
+                    var size = g.MeasureString(text, font);
+                    var rect = new RectangleF(10, picCanvas.Height - size.Height - 10, size.Width + 6, size.Height + 6);
+                    g.FillRectangle(brush, rect);
+                    g.DrawRectangle(pen, rect.X, rect.Y, rect.Width, rect.Height);
+                    g.DrawString(text, font, Brushes.Black, rect.X + 3, rect.Y + 3);
+                }
             }
         }
 

@@ -1,0 +1,183 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Windows.Forms;
+
+namespace AlgortimoCurvas
+{
+    public partial class frmCurvaB_Spline : Form
+    {
+        private List<PointF> controlPoints = new List<PointF>();
+        private List<PointF> curvePoints = new List<PointF>();
+
+        private int selectedPointIndex = -1;
+        private bool isDragging = false;
+
+        public frmCurvaB_Spline()
+        {
+            InitializeComponent();
+        }
+
+        private void picCanvas_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                // Check if clicked near an existing control point (for dragging)
+                int idx = GetPointAt(e.Location);
+                if (idx >= 0)
+                {
+                    selectedPointIndex = idx;
+                    isDragging = true;
+                }
+                else
+                {
+                    // Add new control point
+                    controlPoints.Add(e.Location);
+                    selectedPointIndex = controlPoints.Count - 1;
+                    isDragging = true;
+                    curvePoints.Clear();
+                }
+                picCanvas.Invalidate();
+            }
+            else if (e.Button == MouseButtons.Right)
+            {
+                // Remove nearest point
+                int idx = GetPointAt(e.Location);
+                if (idx >= 0)
+                {
+                    controlPoints.RemoveAt(idx);
+                    selectedPointIndex = -1;
+                    curvePoints.Clear();
+                    picCanvas.Invalidate();
+                }
+            }
+        }
+
+        private void picCanvas_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (isDragging && selectedPointIndex >= 0 && selectedPointIndex < controlPoints.Count)
+            {
+                // Move the selected control point
+                controlPoints[selectedPointIndex] = e.Location;
+                curvePoints.Clear();
+                picCanvas.Invalidate();
+            }
+        }
+
+        private void picCanvas_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (isDragging)
+            {
+                isDragging = false;
+                selectedPointIndex = -1;
+                // Recalcular curva si hay suficientes puntos
+                if (controlPoints.Count >= 2)
+                {
+                    int degree = (int)nudDegree.Value;
+                    int samples = (int)nudSamples.Value;
+                    curvePoints = CCurva.EvaluarCurva(controlPoints, degree, samples);
+                }
+                picCanvas.Invalidate();
+            }
+        }
+
+        private int GetPointAt(Point location)
+        {
+            const int hitRadius = 8;
+            int idx = -1;
+            double bestDist = double.MaxValue;
+            for (int i = 0; i < controlPoints.Count; i++)
+            {
+                double dx = controlPoints[i].X - location.X;
+                double dy = controlPoints[i].Y - location.Y;
+                double d = dx * dx + dy * dy;
+                if (d <= hitRadius * hitRadius && d < bestDist)
+                {
+                    bestDist = d;
+                    idx = i;
+                }
+            }
+            return idx;
+        }
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            controlPoints.Clear();
+            curvePoints.Clear();
+            picCanvas.Invalidate();
+        }
+
+        private void btnDraw_Click(object sender, EventArgs e)
+        {
+            if (controlPoints.Count < 2)
+            {
+                MessageBox.Show("Agrega al menos 2 puntos de control.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            int degree = (int)nudDegree.Value;
+            int samples = (int)nudSamples.Value;
+
+            curvePoints = CCurva.EvaluarCurva(controlPoints, degree, samples);
+            picCanvas.Invalidate();
+        }
+
+        private void picCanvas_Paint(object sender, PaintEventArgs e)
+        {
+            var g = e.Graphics;
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+            // Dibujar puntos de control
+            for (int i = 0; i < controlPoints.Count; i++)
+            {
+                var p = controlPoints[i];
+                var rect = new RectangleF(p.X - 5, p.Y - 5, 10, 10);
+                if (i == selectedPointIndex)
+                {
+                    g.FillEllipse(Brushes.Orange, rect);
+                }
+                else
+                {
+                    g.FillEllipse(Brushes.Blue, rect);
+                }
+                g.DrawEllipse(Pens.Black, rect);
+            }
+
+            // Dibujar líneas entre puntos de control
+            if (controlPoints.Count >= 2)
+            {
+                g.DrawLines(Pens.Gray, controlPoints.ToArray());
+            }
+
+            // Dibujar curva si existe
+            if (curvePoints != null && curvePoints.Count > 1)
+            {
+                g.DrawLines(Pens.Red, curvePoints.ToArray());
+            }
+        }
+
+        private void nudDegree_ValueChanged(object sender, EventArgs e)
+        {
+            // Recalcular curva en vivo
+            if (controlPoints.Count >= 2)
+            {
+                int degree = (int)nudDegree.Value;
+                int samples = (int)nudSamples.Value;
+                curvePoints = CCurva.EvaluarCurva(controlPoints, degree, samples);
+                picCanvas.Invalidate();
+            }
+        }
+
+        private void nudSamples_ValueChanged(object sender, EventArgs e)
+        {
+            // Recalcular curva en vivo
+            if (controlPoints.Count >= 2)
+            {
+                int degree = (int)nudDegree.Value;
+                int samples = (int)nudSamples.Value;
+                curvePoints = CCurva.EvaluarCurva(controlPoints, degree, samples);
+                picCanvas.Invalidate();
+            }
+        }
+    }
+}

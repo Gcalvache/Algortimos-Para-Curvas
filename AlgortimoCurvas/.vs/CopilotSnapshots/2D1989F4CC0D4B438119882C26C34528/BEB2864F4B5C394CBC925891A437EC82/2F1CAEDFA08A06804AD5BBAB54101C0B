@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace AlgortimoCurvas
@@ -17,13 +16,9 @@ namespace AlgortimoCurvas
         // Default number of samples for curve rendering
         private int defaultSamples = 200;
 
-        // New: mode to add points when enabled
-        private bool addPointMode = false;
-
         public frmCurvaB_Spline()
         {
             InitializeComponent();
-            btnAddOnCurve.Text = "Nuevo punto (en curva)";
         }
 
         private void RecalcularCurva()
@@ -44,42 +39,19 @@ namespace AlgortimoCurvas
         {
             if (e.Button == MouseButtons.Left)
             {
-                if (addPointMode)
-                {
-                    // If curve exists and click is near it, project onto curve samples
-                    int curveIdx = GetCurvePointAt(e.Location);
-                    PointF insertPos;
-                    if (curveIdx >= 0 && curvePoints != null && curvePoints.Count > 0)
-                    {
-                        insertPos = curvePoints[curveIdx];
-                    }
-                    else
-                    {
-                        insertPos = new PointF(e.X, e.Y);
-                    }
-
-                    int insertIndex = FindBestInsertIndex(insertPos);
-                    if (insertIndex < 0) insertIndex = controlPoints.Count;
-                    controlPoints.Insert(insertIndex, insertPos);
-                    selectedPointIndex = insertIndex;
-                    isDragging = true;
-
-                    RecalcularCurva();
-                    return;
-                }
-
-                // Normal mode: only select existing control points for dragging
                 int idx = GetPointAt(e.Location);
                 if (idx >= 0)
                 {
                     selectedPointIndex = idx;
                     isDragging = true;
-                    RecalcularCurva();
                 }
                 else
                 {
-                    // do nothing on empty space when not in add mode
+                    controlPoints.Add(e.Location);
+                    selectedPointIndex = controlPoints.Count - 1;
+                    isDragging = true;
                 }
+                RecalcularCurva();
             }
             else if (e.Button == MouseButtons.Right)
             {
@@ -131,75 +103,11 @@ namespace AlgortimoCurvas
             return idx;
         }
 
-        private int GetCurvePointAt(Point location)
-        {
-            if (curvePoints == null || curvePoints.Count == 0) return -1;
-            const int hitRadius = 6;
-            int idx = -1;
-            double bestDist = double.MaxValue;
-            for (int i = 0; i < curvePoints.Count; i++)
-            {
-                double dx = curvePoints[i].X - location.X;
-                double dy = curvePoints[i].Y - location.Y;
-                double d = dx * dx + dy * dy;
-                if (d <= hitRadius * hitRadius && d < bestDist)
-                {
-                    bestDist = d;
-                    idx = i;
-                }
-            }
-            return idx;
-        }
-
         private void btnClear_Click(object sender, EventArgs e)
         {
             controlPoints.Clear();
             curvePoints.Clear();
             picCanvas.Invalidate();
-        }
-
-        private void btnAddOnCurve_Click(object sender, EventArgs e)
-        {
-            // Toggle add point mode
-            addPointMode = !addPointMode;
-            btnAddOnCurve.Text = addPointMode ? "Añadir punto: ON" : "Nuevo punto (en curva)";
-            picCanvas.Cursor = addPointMode ? Cursors.Cross : Cursors.Default;
-        }
-
-        private int FindBestInsertIndex(PointF point)
-        {
-            // Find the control polygon segment whose projection is nearest to the given point
-            if (controlPoints.Count < 2) return controlPoints.Count;
-            double bestDist = double.MaxValue;
-            int bestIndex = -1;
-            for (int i = 0; i < controlPoints.Count - 1; i++)
-            {
-                var a = controlPoints[i];
-                var b = controlPoints[i + 1];
-                var proj = ProjectPointOnSegment(point, a, b);
-                double dx = proj.X - point.X;
-                double dy = proj.Y - point.Y;
-                double d = dx * dx + dy * dy;
-                if (d < bestDist)
-                {
-                    bestDist = d;
-                    bestIndex = i + 1;
-                }
-            }
-            return bestIndex;
-        }
-
-        private PointF ProjectPointOnSegment(PointF p, PointF a, PointF b)
-        {
-            float vx = b.X - a.X;
-            float vy = b.Y - a.Y;
-            float wx = p.X - a.X;
-            float wy = p.Y - a.Y;
-            float denom = vx * vx + vy * vy;
-            if (denom == 0) return a;
-            float t = (vx * wx + vy * wy) / denom;
-            t = Math.Max(0f, Math.Min(1f, t));
-            return new PointF(a.X + t * vx, a.Y + t * vy);
         }
 
         private void picCanvas_Paint(object sender, PaintEventArgs e)

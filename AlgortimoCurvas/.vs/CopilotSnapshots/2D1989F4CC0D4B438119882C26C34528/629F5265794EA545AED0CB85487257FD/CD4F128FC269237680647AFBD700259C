@@ -10,7 +10,6 @@
         private System.Windows.Forms.PictureBox picCanvas;
         private System.Windows.Forms.NumericUpDown nudDegree;
         private System.Windows.Forms.Button btnClear;
-        private System.Windows.Forms.Button btnAddOnCurve;
         private System.Windows.Forms.Label lblDegree;
 
         /// <summary>
@@ -37,7 +36,6 @@
             this.picCanvas = new System.Windows.Forms.PictureBox();
             this.nudDegree = new System.Windows.Forms.NumericUpDown();
             this.btnClear = new System.Windows.Forms.Button();
-            this.btnAddOnCurve = new System.Windows.Forms.Button();
             this.lblDegree = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.picCanvas)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDegree)).BeginInit();
@@ -47,9 +45,10 @@
             // 
             this.picCanvas.BackColor = System.Drawing.Color.White;
             this.picCanvas.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.picCanvas.Location = new System.Drawing.Point(12, 12);
+            this.picCanvas.Location = new System.Drawing.Point(9, 10);
+            this.picCanvas.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.picCanvas.Name = "picCanvas";
-            this.picCanvas.Size = new System.Drawing.Size(760, 380);
+            this.picCanvas.Size = new System.Drawing.Size(570, 309);
             this.picCanvas.TabIndex = 0;
             this.picCanvas.TabStop = false;
             this.picCanvas.Paint += new System.Windows.Forms.PaintEventHandler(this.picCanvas_Paint);
@@ -59,19 +58,20 @@
             // 
             // nudDegree
             // 
-            this.nudDegree.Location = new System.Drawing.Point(820, 40);
-            this.nudDegree.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+            this.nudDegree.Location = new System.Drawing.Point(615, 32);
+            this.nudDegree.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.nudDegree.Maximum = new decimal(new int[] {
             10,
             0,
             0,
             0});
+            this.nudDegree.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.nudDegree.Name = "nudDegree";
-            this.nudDegree.Size = new System.Drawing.Size(60, 22);
+            this.nudDegree.Size = new System.Drawing.Size(45, 20);
             this.nudDegree.TabIndex = 1;
             this.nudDegree.Value = new decimal(new int[] {
             3,
@@ -82,43 +82,35 @@
             // 
             // btnClear
             // 
-            this.btnClear.Location = new System.Drawing.Point(800, 300);
+            this.btnClear.Location = new System.Drawing.Point(603, 65);
+            this.btnClear.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnClear.Name = "btnClear";
-            this.btnClear.Size = new System.Drawing.Size(120, 30);
+            this.btnClear.Size = new System.Drawing.Size(90, 24);
             this.btnClear.TabIndex = 3;
             this.btnClear.Text = "Limpiar";
             this.btnClear.UseVisualStyleBackColor = true;
             this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
             // 
-            // btnAddOnCurve
-            // 
-            this.btnAddOnCurve.Location = new System.Drawing.Point(800, 250);
-            this.btnAddOnCurve.Name = "btnAddOnCurve";
-            this.btnAddOnCurve.Size = new System.Drawing.Size(120, 30);
-            this.btnAddOnCurve.TabIndex = 4;
-            this.btnAddOnCurve.Text = "Nuevo punto (en curva)";
-            this.btnAddOnCurve.UseVisualStyleBackColor = true;
-            this.btnAddOnCurve.Click += new System.EventHandler(this.btnAddOnCurve_Click);
-            // 
             // lblDegree
             // 
             this.lblDegree.AutoSize = true;
-            this.lblDegree.Location = new System.Drawing.Point(800, 20);
+            this.lblDegree.Location = new System.Drawing.Point(600, 16);
+            this.lblDegree.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblDegree.Name = "lblDegree";
-            this.lblDegree.Size = new System.Drawing.Size(92, 17);
+            this.lblDegree.Size = new System.Drawing.Size(51, 13);
             this.lblDegree.TabIndex = 5;
             this.lblDegree.Text = "Grado (p)";
             // 
             // frmCurvaB_Spline
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(940, 410);
+            this.ClientSize = new System.Drawing.Size(705, 333);
             this.Controls.Add(this.lblDegree);
-            this.Controls.Add(this.btnAddOnCurve);
             this.Controls.Add(this.btnClear);
             this.Controls.Add(this.nudDegree);
             this.Controls.Add(this.picCanvas);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "frmCurvaB_Spline";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "CURVA B-SPLINE";

@@ -9,9 +9,11 @@
 
         private System.Windows.Forms.PictureBox picCanvas;
         private System.Windows.Forms.NumericUpDown nudDegree;
+        private System.Windows.Forms.NumericUpDown nudSamples;
         private System.Windows.Forms.Button btnClear;
-        private System.Windows.Forms.Button btnAddOnCurve;
+        private System.Windows.Forms.Button btnDraw;
         private System.Windows.Forms.Label lblDegree;
+        private System.Windows.Forms.Label lblSamples;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -36,11 +38,14 @@
         {
             this.picCanvas = new System.Windows.Forms.PictureBox();
             this.nudDegree = new System.Windows.Forms.NumericUpDown();
+            this.nudSamples = new System.Windows.Forms.NumericUpDown();
             this.btnClear = new System.Windows.Forms.Button();
-            this.btnAddOnCurve = new System.Windows.Forms.Button();
+            this.btnDraw = new System.Windows.Forms.Button();
             this.lblDegree = new System.Windows.Forms.Label();
+            this.lblSamples = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.picCanvas)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDegree)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudSamples)).BeginInit();
             this.SuspendLayout();
             // 
             // picCanvas
@@ -53,9 +58,7 @@
             this.picCanvas.TabIndex = 0;
             this.picCanvas.TabStop = false;
             this.picCanvas.Paint += new System.Windows.Forms.PaintEventHandler(this.picCanvas_Paint);
-            this.picCanvas.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picCanvas_MouseDown);
-            this.picCanvas.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picCanvas_MouseMove);
-            this.picCanvas.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picCanvas_MouseUp);
+            this.picCanvas.MouseClick += new System.Windows.Forms.MouseEventHandler(this.picCanvas_MouseClick);
             // 
             // nudDegree
             // 
@@ -78,7 +81,28 @@
             0,
             0,
             0});
-            this.nudDegree.ValueChanged += new System.EventHandler(this.nudDegree_ValueChanged);
+            // 
+            // nudSamples
+            // 
+            this.nudSamples.Location = new System.Drawing.Point(820, 100);
+            this.nudSamples.Minimum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.nudSamples.Maximum = new decimal(new int[] {
+            2000,
+            0,
+            0,
+            0});
+            this.nudSamples.Name = "nudSamples";
+            this.nudSamples.Size = new System.Drawing.Size(60, 22);
+            this.nudSamples.TabIndex = 2;
+            this.nudSamples.Value = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
             // 
             // btnClear
             // 
@@ -90,15 +114,15 @@
             this.btnClear.UseVisualStyleBackColor = true;
             this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
             // 
-            // btnAddOnCurve
+            // btnDraw
             // 
-            this.btnAddOnCurve.Location = new System.Drawing.Point(800, 250);
-            this.btnAddOnCurve.Name = "btnAddOnCurve";
-            this.btnAddOnCurve.Size = new System.Drawing.Size(120, 30);
-            this.btnAddOnCurve.TabIndex = 4;
-            this.btnAddOnCurve.Text = "Nuevo punto (en curva)";
-            this.btnAddOnCurve.UseVisualStyleBackColor = true;
-            this.btnAddOnCurve.Click += new System.EventHandler(this.btnAddOnCurve_Click);
+            this.btnDraw.Location = new System.Drawing.Point(800, 250);
+            this.btnDraw.Name = "btnDraw";
+            this.btnDraw.Size = new System.Drawing.Size(120, 30);
+            this.btnDraw.TabIndex = 4;
+            this.btnDraw.Text = "Dibujar curva";
+            this.btnDraw.UseVisualStyleBackColor = true;
+            this.btnDraw.Click += new System.EventHandler(this.btnDraw_Click);
             // 
             // lblDegree
             // 
@@ -109,14 +133,25 @@
             this.lblDegree.TabIndex = 5;
             this.lblDegree.Text = "Grado (p)";
             // 
+            // lblSamples
+            // 
+            this.lblSamples.AutoSize = true;
+            this.lblSamples.Location = new System.Drawing.Point(800, 80);
+            this.lblSamples.Name = "lblSamples";
+            this.lblSamples.Size = new System.Drawing.Size(121, 17);
+            this.lblSamples.TabIndex = 6;
+            this.lblSamples.Text = "Muestras (samples)";
+            // 
             // frmCurvaB_Spline
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(940, 410);
+            this.Controls.Add(this.lblSamples);
             this.Controls.Add(this.lblDegree);
-            this.Controls.Add(this.btnAddOnCurve);
+            this.Controls.Add(this.btnDraw);
             this.Controls.Add(this.btnClear);
+            this.Controls.Add(this.nudSamples);
             this.Controls.Add(this.nudDegree);
             this.Controls.Add(this.picCanvas);
             this.Name = "frmCurvaB_Spline";
@@ -124,6 +159,7 @@
             this.Text = "CURVA B-SPLINE";
             ((System.ComponentModel.ISupportInitialize)(this.picCanvas)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDegree)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudSamples)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
