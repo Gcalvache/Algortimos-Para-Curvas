@@ -3,7 +3,11 @@
   "WorkspaceRootPath": "C:\\Users\\PC\\Desktop\\GRAFICA\\Algortimos Para Curvas\\Algortimos-Para-Curvas\\AlgortimoCurvas\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{87695FE8-1F2E-4E4E-B712-4FF58944A6D4}|AlgortimoCurvas\\AlgortimoCurvas.csproj|C:\\Users\\PC\\Desktop\\GRAFICA\\Algortimos Para Curvas\\Algortimos-Para-Curvas\\AlgortimoCurvas\\algortimocurvas\\frmcurvab_spline.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\PC\\Desktop\\GRAFICA\\Algortimos Para Curvas\\Algortimos-Para-Curvas\\AlgortimoCurvas\\docs\\Documentacion_Algoritmos.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}|",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:docs\\Documentacion_Algoritmos.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87695FE8-1F2E-4E4E-B712-4FF58944A6D4}|AlgortimoCurvas\\AlgortimoCurvas.csproj|c:\\users\\pc\\desktop\\grafica\\algortimos para curvas\\algortimos-para-curvas\\algortimocurvas\\algortimocurvas\\frmcurvab_spline.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{87695FE8-1F2E-4E4E-B712-4FF58944A6D4}|AlgortimoCurvas\\AlgortimoCurvas.csproj|solutionrelative:algortimocurvas\\frmcurvab_spline.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
@@ -23,7 +27,7 @@
       "RelativeMoniker": "D:0:0:{87695FE8-1F2E-4E4E-B712-4FF58944A6D4}|AlgortimoCurvas\\AlgortimoCurvas.csproj|solutionrelative:algortimocurvas\\frmcurvabezier.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{87695FE8-1F2E-4E4E-B712-4FF58944A6D4}|AlgortimoCurvas\\AlgortimoCurvas.csproj|c:\\users\\pc\\desktop\\grafica\\algortimos para curvas\\algortimos-para-curvas\\algortimocurvas\\algortimocurvas\\frmcurvabezier.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "AbsoluteMoniker": "D:0:0:{87695FE8-1F2E-4E4E-B712-4FF58944A6D4}|AlgortimoCurvas\\AlgortimoCurvas.csproj|C:\\Users\\PC\\Desktop\\GRAFICA\\Algortimos Para Curvas\\Algortimos-Para-Curvas\\AlgortimoCurvas\\algortimocurvas\\frmcurvabezier.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{87695FE8-1F2E-4E4E-B712-4FF58944A6D4}|AlgortimoCurvas\\AlgortimoCurvas.csproj|solutionrelative:algortimocurvas\\frmcurvabezier.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
@@ -46,11 +50,72 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Documentacion_Algoritmos.md",
+              "DocumentMoniker": "C:\\Users\\PC\\Desktop\\GRAFICA\\Algortimos Para Curvas\\Algortimos-Para-Curvas\\AlgortimoCurvas\\docs\\Documentacion_Algoritmos.md",
+              "RelativeDocumentMoniker": "docs\\Documentacion_Algoritmos.md",
+              "ToolTip": "C:\\Users\\PC\\Desktop\\GRAFICA\\Algortimos Para Curvas\\Algortimos-Para-Curvas\\AlgortimoCurvas\\docs\\Documentacion_Algoritmos.md",
+              "RelativeToolTip": "docs\\Documentacion_Algoritmos.md",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2025-12-15T03:51:46.087Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "frmCurvaBezier.cs",
+              "DocumentMoniker": "C:\\Users\\PC\\Desktop\\GRAFICA\\Algortimos Para Curvas\\Algortimos-Para-Curvas\\AlgortimoCurvas\\AlgortimoCurvas\\frmCurvaBezier.cs",
+              "RelativeDocumentMoniker": "AlgortimoCurvas\\frmCurvaBezier.cs",
+              "ToolTip": "C:\\Users\\PC\\Desktop\\GRAFICA\\Algortimos Para Curvas\\Algortimos-Para-Curvas\\AlgortimoCurvas\\AlgortimoCurvas\\frmCurvaBezier.cs",
+              "RelativeToolTip": "AlgortimoCurvas\\frmCurvaBezier.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-15T02:54:09.93Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "frmPesta\u00F1aPrincipal.cs",
+              "DocumentMoniker": "C:\\Users\\PC\\Desktop\\GRAFICA\\Algortimos Para Curvas\\Algortimos-Para-Curvas\\AlgortimoCurvas\\AlgortimoCurvas\\frmPesta\u00F1aPrincipal.cs",
+              "RelativeDocumentMoniker": "AlgortimoCurvas\\frmPesta\u00F1aPrincipal.cs",
+              "ToolTip": "C:\\Users\\PC\\Desktop\\GRAFICA\\Algortimos Para Curvas\\Algortimos-Para-Curvas\\AlgortimoCurvas\\AlgortimoCurvas\\frmPesta\u00F1aPrincipal.cs",
+              "RelativeToolTip": "AlgortimoCurvas\\frmPesta\u00F1aPrincipal.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB4AAAAhAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-15T02:23:02.051Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "frmCurvaB_Spline.cs [Dise\u00F1o]",
+              "DocumentMoniker": "C:\\Users\\PC\\Desktop\\GRAFICA\\Algortimos Para Curvas\\Algortimos-Para-Curvas\\AlgortimoCurvas\\AlgortimoCurvas\\frmCurvaB_Spline.cs",
+              "RelativeDocumentMoniker": "AlgortimoCurvas\\frmCurvaB_Spline.cs",
+              "ToolTip": "C:\\Users\\PC\\Desktop\\GRAFICA\\Algortimos Para Curvas\\Algortimos-Para-Curvas\\AlgortimoCurvas\\AlgortimoCurvas\\frmCurvaB_Spline.cs [Dise\u00F1o]",
+              "RelativeToolTip": "AlgortimoCurvas\\frmCurvaB_Spline.cs [Dise\u00F1o]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-15T02:21:28.53Z",
+              "EditorCaption": " [Dise\u00F1o]"
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 2,
+              "Title": "CCurva.cs",
+              "DocumentMoniker": "C:\\Users\\PC\\Desktop\\GRAFICA\\Algortimos Para Curvas\\Algortimos-Para-Curvas\\AlgortimoCurvas\\AlgortimoCurvas\\CCurva.cs",
+              "RelativeDocumentMoniker": "AlgortimoCurvas\\CCurva.cs",
+              "ToolTip": "C:\\Users\\PC\\Desktop\\GRAFICA\\Algortimos Para Curvas\\Algortimos-Para-Curvas\\AlgortimoCurvas\\AlgortimoCurvas\\CCurva.cs",
+              "RelativeToolTip": "AlgortimoCurvas\\CCurva.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-15T02:20:23.007Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "frmCurvaB_Spline.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\GRAFICA\\Algortimos Para Curvas\\Algortimos-Para-Curvas\\AlgortimoCurvas\\AlgortimoCurvas\\frmCurvaB_Spline.cs",
               "RelativeDocumentMoniker": "AlgortimoCurvas\\frmCurvaB_Spline.cs",
@@ -63,70 +128,18 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "CCurva.cs",
-              "DocumentMoniker": "C:\\Users\\PC\\Desktop\\GRAFICA\\Algortimos Para Curvas\\Algortimos-Para-Curvas\\AlgortimoCurvas\\AlgortimoCurvas\\CCurva.cs",
-              "RelativeDocumentMoniker": "AlgortimoCurvas\\CCurva.cs",
-              "ToolTip": "C:\\Users\\PC\\Desktop\\GRAFICA\\Algortimos Para Curvas\\Algortimos-Para-Curvas\\AlgortimoCurvas\\AlgortimoCurvas\\CCurva.cs",
-              "RelativeToolTip": "AlgortimoCurvas\\CCurva.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAEAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-15T02:20:23.007Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "frmCurvaBezier.cs",
-              "DocumentMoniker": "C:\\Users\\PC\\Desktop\\GRAFICA\\Algortimos Para Curvas\\Algortimos-Para-Curvas\\AlgortimoCurvas\\AlgortimoCurvas\\frmCurvaBezier.cs",
-              "RelativeDocumentMoniker": "AlgortimoCurvas\\frmCurvaBezier.cs",
-              "ToolTip": "C:\\Users\\PC\\Desktop\\GRAFICA\\Algortimos Para Curvas\\Algortimos-Para-Curvas\\AlgortimoCurvas\\AlgortimoCurvas\\frmCurvaBezier.cs",
-              "RelativeToolTip": "AlgortimoCurvas\\frmCurvaBezier.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAEAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-15T02:54:09.93Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "frmPesta\u00F1aPrincipal.cs",
-              "DocumentMoniker": "C:\\Users\\PC\\Desktop\\GRAFICA\\Algortimos Para Curvas\\Algortimos-Para-Curvas\\AlgortimoCurvas\\AlgortimoCurvas\\frmPesta\u00F1aPrincipal.cs",
-              "RelativeDocumentMoniker": "AlgortimoCurvas\\frmPesta\u00F1aPrincipal.cs",
-              "ToolTip": "C:\\Users\\PC\\Desktop\\GRAFICA\\Algortimos Para Curvas\\Algortimos-Para-Curvas\\AlgortimoCurvas\\AlgortimoCurvas\\frmPesta\u00F1aPrincipal.cs",
-              "RelativeToolTip": "AlgortimoCurvas\\frmPesta\u00F1aPrincipal.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB4AAAAhAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-15T02:23:02.051Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "frmCurvaB_Spline.cs [Dise\u00F1o]",
-              "DocumentMoniker": "C:\\Users\\PC\\Desktop\\GRAFICA\\Algortimos Para Curvas\\Algortimos-Para-Curvas\\AlgortimoCurvas\\AlgortimoCurvas\\frmCurvaB_Spline.cs",
-              "RelativeDocumentMoniker": "AlgortimoCurvas\\frmCurvaB_Spline.cs",
-              "ToolTip": "C:\\Users\\PC\\Desktop\\GRAFICA\\Algortimos Para Curvas\\Algortimos-Para-Curvas\\AlgortimoCurvas\\AlgortimoCurvas\\frmCurvaB_Spline.cs [Dise\u00F1o]",
-              "RelativeToolTip": "AlgortimoCurvas\\frmCurvaB_Spline.cs [Dise\u00F1o]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-15T02:21:28.53Z",
-              "EditorCaption": " [Dise\u00F1o]"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "frmCurvaBezier.cs [Dise\u00F1o]",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\GRAFICA\\Algortimos Para Curvas\\Algortimos-Para-Curvas\\AlgortimoCurvas\\AlgortimoCurvas\\frmCurvaBezier.cs",
               "RelativeDocumentMoniker": "AlgortimoCurvas\\frmCurvaBezier.cs",
               "ToolTip": "C:\\Users\\PC\\Desktop\\GRAFICA\\Algortimos Para Curvas\\Algortimos-Para-Curvas\\AlgortimoCurvas\\AlgortimoCurvas\\frmCurvaBezier.cs [Dise\u00F1o]",
               "RelativeToolTip": "AlgortimoCurvas\\frmCurvaBezier.cs [Dise\u00F1o]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-15T02:21:07.582Z",
-              "EditorCaption": " [Dise\u00F1o]"
+              "WhenOpened": "2025-12-15T02:21:07.582Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 9,
               "Title": "frmCurvaBezier.Designer.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\GRAFICA\\Algortimos Para Curvas\\Algortimos-Para-Curvas\\AlgortimoCurvas\\AlgortimoCurvas\\frmCurvaBezier.Designer.cs",
               "RelativeDocumentMoniker": "AlgortimoCurvas\\frmCurvaBezier.Designer.cs",
@@ -134,24 +147,22 @@
               "RelativeToolTip": "AlgortimoCurvas\\frmCurvaBezier.Designer.cs",
               "ViewState": "AgIAAMcAAAAAAAAAAABBwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-15T02:53:37.694Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-15T02:53:37.694Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "frmPesta\u00F1aPrincipal.cs [Dise\u00F1o]",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\GRAFICA\\Algortimos Para Curvas\\Algortimos-Para-Curvas\\AlgortimoCurvas\\AlgortimoCurvas\\frmPesta\u00F1aPrincipal.cs",
               "RelativeDocumentMoniker": "AlgortimoCurvas\\frmPesta\u00F1aPrincipal.cs",
               "ToolTip": "C:\\Users\\PC\\Desktop\\GRAFICA\\Algortimos Para Curvas\\Algortimos-Para-Curvas\\AlgortimoCurvas\\AlgortimoCurvas\\frmPesta\u00F1aPrincipal.cs [Dise\u00F1o]",
               "RelativeToolTip": "AlgortimoCurvas\\frmPesta\u00F1aPrincipal.cs [Dise\u00F1o]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-15T01:12:06.262Z",
-              "EditorCaption": " [Dise\u00F1o]"
+              "WhenOpened": "2025-12-15T01:12:06.262Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "frmCurvaB_Spline.Designer.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\GRAFICA\\Algortimos Para Curvas\\Algortimos-Para-Curvas\\AlgortimoCurvas\\AlgortimoCurvas\\frmCurvaB_Spline.Designer.cs",
               "RelativeDocumentMoniker": "AlgortimoCurvas\\frmCurvaB_Spline.Designer.cs",
@@ -159,8 +170,7 @@
               "RelativeToolTip": "AlgortimoCurvas\\frmCurvaB_Spline.Designer.cs",
               "ViewState": "AgIAAMoAAAAAAAAAAABBwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-15T02:32:42.265Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-15T02:32:42.265Z"
             }
           ]
         }
